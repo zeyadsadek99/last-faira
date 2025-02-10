@@ -1,0 +1,78 @@
+<template>
+  <div>
+    <!-- START:: MAIN LOADER -->
+    <UiLoadersMainLoader v-if="isLoading" />
+    <!-- END:: MAIN LOADER -->
+
+    <!-- START:: PAGE CONTENT -->
+    <div class="about_us_page_wrapper fadeIn" v-else>
+      <!-- START:: BREADCRUMB -->
+      <StructureTheBreadcrumb>
+        <template #page_title>
+          {{ t("TITLES.about_us") }}
+        </template>
+        <template #breadcrumb_current_page>
+          {{ t("TITLES.about_us") }}
+        </template>
+      </StructureTheBreadcrumb>
+      <!-- END:: BREADCRUMB -->
+
+      <!-- START:: ABOUT US PAGE CONTENT -->
+      <GeneralAboutUs :aboutUsData="homeData?.about" />
+      <!-- END:: ABOUT US PAGE CONTENT -->
+
+      <!-- START:: CONTACT SECTION -->
+      <GeneralContactUs :contactUsData="homeData?.contacts" />
+      <!-- END:: CONTACT SECTION -->
+    </div>
+    <!-- END:: PAGE CONTENT -->
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import { useNuxtApp, useAsyncData } from "#app";
+import Breadcrumb from "@/components/structure/TheBreadcrumb.vue";
+import MainLoader from "@/components/ui/loaders/MainLoader.vue";
+import AboutUs from "@/components/general/AboutUs.vue";
+import ContactUs from "@/components/general/ContactUs.vue";
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
+// ✅ Inject Axios from Plugin
+const { $axios } = useNuxtApp();
+const isLoading = ref(false);
+const homeData = ref(null);
+
+// ✅ Detect user type
+const userType = computed(() =>
+  process.client ? localStorage.getItem("elmo3lm_elmosa3d_user_type") : null
+);
+
+// ✅ Define API Endpoint Dynamically
+const endpoint = computed(() => {
+  if (userType.value === "teacher") return "teacher/home";
+  if (userType.value === "student") return "student/home";
+  if (userType.value === "parent") return "parent/home";
+  return "visitor/home"; // Default for visitors
+});
+
+// ✅ Fetch Home Data Using Injected Axios
+const getHomeData = async () => {
+  isLoading.value = true;
+  try {
+    const response = await $axios.get(endpoint.value);
+    homeData.value = response.data.data;
+  } catch (error) {
+    console.error("Error fetching home data:", error);
+  } finally {
+    setTimeout(() => {
+      isLoading.value = false;
+    }, 500);
+  }
+};
+
+// ✅ Fetch data when component mounts
+onMounted(() => {
+  getHomeData();
+});
+</script>
