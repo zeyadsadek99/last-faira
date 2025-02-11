@@ -14,7 +14,7 @@ export default {
   theme: {
     colors: {
 
-      border: "#7C8089",
+      // border: "#7C8089",
       primary: 'var(--color-primary)',
       secondary: 'var(--color-secondary)',
       primaryOpacity: 'var(--color-primary-opacity)',

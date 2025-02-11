@@ -6,8 +6,9 @@ import axios from "axios";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 // Import Components
-import HeroSlider from "@/components/structure/TheSlider.vue";
-import AboutSection from "@/components/general/AboutUs.vue";
+// import HeroSlider from "@/components/structure/TheSlider.vue";
+// import AboutSection from "@/components/general/AboutUs.vue";
+// import Loader1 from "~/components/Loader1.vue";
 
 // Initialize Pinia Authentication Store
 const authStore = useAuthenticationStore();
@@ -94,22 +95,22 @@ onMounted(() => {
 <template ::key="$route.path">
   <div>
     <!-- START:: MAIN LOADER -->
-    <UiLoadersMainLoader v-if="isLoading" />
+    <Loader1 v-if="isLoading" />
     <!-- END:: MAIN LOADER -->
 
     <!-- START:: HOME PAGE CONTENT -->
     <div class="home_wrapper fadeIn">
       <!-- START:: HERO SECTION -->
       <!-- <HeroSlider v-if="homeData" :sliderData="homeData.sliders" /> -->
-      <AboutSection v-if="homeData" :aboutUsData="homeData.about" />
-      <GeneralStudentFeaturedCourses
+      <!-- <AboutSection v-if="homeData" :aboutUsData="homeData.about" /> -->
+      <!-- <GeneralStudentFeaturedCourses
         :Items="homeData?.newer_subject_name"
         v-if="
           authStore.getAuthenticatedUserData.type != 'parent' &&
           authStore.getAuthenticatedUserData.type != 'teacher'
         "
       />
-      <GeneralContactUs :contactUsData="homeData?.contacts" v-if="homeData" />
+      <GeneralContactUs :contactUsData="homeData?.contacts" v-if="homeData" /> -->
       <!-- <p>Current Direction: {{ documentDirection }}</p> -->
 
       <!-- END:: HERO SECTION -->

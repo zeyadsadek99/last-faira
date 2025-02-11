@@ -65,65 +65,65 @@
 }
 
 html[dir="ltr"] {
-  @apply font-switzer;
+  @apply font-arb;
 }
 html {
-  @apply font-arb;
+  @apply font-arb !important;
 }
 
 @layer base {
   @font-face {
-    font-style: normal;
-    font-display: swap;
-    font-weight: 100;
-    font-family: "ArbFONTS-Somar-ExtraLight";
-    src: url("../fonts/arab/ArbFONTS-Somar-ExtraLight.otf");
+    // font-style: normal;
+    // font-display: swap;
+    // font-weight: 100;
+    font-family: "Arb";
+    src: url("../style/fonts/arab/ArbFONTS-Somar-ExtraLight.otf");
   }
   @font-face {
-    font-style: normal;
-    font-display: swap;
+    // font-style: normal;
+    // font-display: swap;
     font-weight: 200;
     font-family: "Arb";
-    src: url("../fonts/arab/ArbFONTS-Somar-Light.otf");
+    src: url("../style/fonts/arab/ArbFONTS-Somar-Light.otf");
   }
   @font-face {
-    font-style: normal;
-    font-display: swap;
+    // font-style: normal;
+    // font-display: swap;
     font-weight: 300;
     font-family: "Arb";
-    src: url("../fonts/arab/ArbFONTS-Somar-Thin.otf");
+    src: url("../style/fonts/arab/ArbFONTS-Somar-Thin.otf");
   }
   @font-face {
-    font-style: normal;
-    font-display: swap;
+    // font-style: normal;
+    // font-display: swap;
     font-weight: 400;
     font-family: "Arb";
-    src: url("../fonts/arab/ArbFONTS-Somar-Regular.otf");
+    src: url("../style/fonts/arab/ArbFONTS-Somar-Regular.otf");
   }
   @font-face {
-    font-style: normal;
-    font-display: swap;
+    // font-style: normal;
+    // font-display: swap;
     font-weight: 500;
     font-family: "Arb";
-    src: url("../fonts/arab/ArbFONTS-Somar-Medium.otf");
+    src: url("../style/fonts/arab/ArbFONTS-Somar-Medium.otf");
   }
   @font-face {
-    font-style: normal;
-    font-display: swap;
+    // font-style: normal;
+    // font-display: swap;
     font-weight: 600;
     font-family: "Arb";
-    src: url("../fonts/arab/ArbFONTS-Somar-SemiBold.otf");
+    src: url("../style/fonts/arab/ArbFONTS-Somar-SemiBold.otf");
   }
   @font-face {
-    font-style: normal;
-    font-display: swap;
+    // font-style: normal;
+    // font-display: swap;
     font-weight: 700;
     font-family: "Arb";
-    src: url("../fonts/arab/ArbFONTS-Somar-Bold.otf");
+    src: url("../style/fonts/arab/ArbFONTS-Somar-Bold.otf");
   }
   @font-face {
-    font-style: normal;
-    font-display: swap;
+    // font-style: normal;
+    // font-display: swap;
     font-weight: 800;
     font-family: "Arb";
     src: url("./fonts/arab/ArbFONTS-Somar-ExtraBold.otf");

@@ -8,7 +8,7 @@
             <div class="logo_wrapper">
               <NuxtLink to="/">
                 <img
-                  src="../../public/media/logo/logo.svg"
+                  src="../assets/media/logo/logo.svg"
                   alt="Al-Moalem Al-Mosaed App Logo"
                   width="160"
                   height="145"
@@ -109,7 +109,7 @@
               <div class="download_platforms">
                 <a :href="homeData?.contacts?.link_ios" target="_blank">
                   <img
-                    src="../../public/media/stores_logos/apple-store.svg"
+                    src="../assets/media/stores_logos/apple-store.svg"
                     alt="Play Store"
                     width="125"
                     height="90"
@@ -118,7 +118,7 @@
 
                 <a :href="homeData?.contacts?.link_android" target="_blank">
                   <img
-                    src="../../public/media/stores_logos/google-play.svg"
+                    src="../assets/media/stores_logos/google-play.svg"
                     alt="Google Play"
                     width="125"
                     height="90"

@@ -2,6 +2,11 @@
 const axios = useNuxtApp().$axios;
 const { locale, t } = useI18n();
 const i18n: any = useI18n();
+const userType = ref(process.client ? localStorage.getItem("elmo3lm_elmosa3d_user_type") : null);
+const route = useRoute();
+const isLoading = ref(false);
+const homeData = ref(null);
+const { $axios } = useNuxtApp();
 const endpoint = computed(() => {
   if (userType.value === "teacher") return "teacher/home";
   if (userType.value === "student") return "student/home";
@@ -18,52 +23,28 @@ const getHomeData = async () => {
   } finally {
     isLoading.value = false;
   }
-
+};
 const {
   data: settings,
   status,
 
   refresh,
 } = await useLazyAsyncData("home", () => getHomeData());
-
-// watch(
-//   () => settings.value,
-//   (value) => {
-//     if (value) {
-//       useAppStore().settings = value;
-//       if (import.meta.client) {
-//         if (value.primary_color) {
-//           document.documentElement.style.setProperty(
-//             `--color-primary`,
-//             value.primary_color
-//           );
-//           document.documentElement.style.setProperty(
-//             `--color-main-opacity`,
-//             value.primary_color + "1A"
-//           );
-//           document.documentElement.style.setProperty(
-//             `--color-main-opacity4`,
-//             value.primary_color + "0D"
-//           );
-//           document.documentElement.style.setProperty(
-//             `--color-main-opacity30`,
-//             value.primary_color + "4D"
-//           );
-//         }
-//         if (value.primary_color) {
-//           document.documentElement.style.setProperty(
-//             `--color-secondary`,
-//             value.secondary_color
-//           );
-//         }
-//       }
-//     }
-//   },
-//   {
-//     immediate: true,
-//     deep: true,
-//   }
-// );
+const scrollToSection = (sectionId: string ) => {
+  const section = document.getElementById(sectionId);
+  if (section) {
+    section.scrollIntoView({ behavior: "smooth" });
+  }
+};
+onMounted(() => {
+  getHomeData();
+  if (route.hash === "#contact") {
+    setTimeout(() => {
+      scrollToSection("contact");
+    }, 1000);
+  }
+  // documentDirection.value = document.documentElement.dir;
+});
 </script>
 
 <template>
@@ -152,14 +133,14 @@ const {
       <Meta name="og:image" content="~/assets/icons/logo.svg" />
     </Head> -->
     <Body :dir="locale == 'ar' ? 'rtl' : 'ltr'">
-      <div class="min-h-[100vh]">
+      <div class="min-h-[100vh] relative">
         <Header />
         <div class="app_wrapper" id="app_wrapper">
           <slot />
         </div>
         <!-- <GlobalTopButton /> -->
         <!-- :settings="settings" -->
-        <Footer />
+        <!-- <Footer /> -->
       </div>
     </Body>
   </Html>

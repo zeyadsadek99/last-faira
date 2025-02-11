@@ -20,7 +20,7 @@ defineProps({});
 <style scoped>
 /* ✅ Tailwind CSS Loader Styling */
 .main_loader_wrapper {
-  @apply fixed left-0 top-0 w-full h-screen flex items-center justify-center bg-themeBgClr z-30;
+  @apply fixed left-0 top-0 w-full h-screen flex items-center justify-center  z-30;
 }
 
 /* ✅ Loader Customization */
@@ -48,8 +48,10 @@ defineProps({});
 .book .inner .left::before,
 .book .inner .right::before {
   content: "";
-  @apply w-[48px] h-[4px] absolute top-[-10px] left-[6px] rounded bg-inherit;
+  @apply w-[48px] h-[4px] absolute top-[-10px] left-[6px] rounded;
+  background: inherit; /* ✅ Use direct CSS instead */
 }
+
 
 .book .inner .left {
   @apply right-[28px] origin-[58px_2px] rotate-90;
@@ -143,10 +145,11 @@ defineProps({});
   }
   10%,
   40% {
-    transform: rotateZ(0deg) origin-[2px_2px];
+    transform: rotateZ(0deg);
+    transform-origin: 2px 2px;
   }
-  40.01%,
-  59.99% {
+  40%,
+  60% {
     transform-origin: 30px 2px;
   }
   46%,
@@ -155,12 +158,14 @@ defineProps({});
   }
   60%,
   90% {
-    transform: rotateZ(0deg) origin-[2px_2px];
+    transform: rotateZ(0deg);
+    transform-origin: 2px 2px;
   }
   96% {
     transform: rotateZ(-90deg);
   }
 }
+
 
 @keyframes left {
   4% {
