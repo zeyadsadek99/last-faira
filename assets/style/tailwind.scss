@@ -75,7 +75,7 @@ html {
   @font-face {
     // font-style: normal;
     // font-display: swap;
-    // font-weight: 100;
+    font-weight: 100;
     font-family: "Arb";
     src: url("../style/fonts/arab/ArbFONTS-Somar-ExtraLight.otf");
   }
@@ -128,148 +128,148 @@ html {
     font-family: "Arb";
     src: url("./fonts/arab/ArbFONTS-Somar-ExtraBold.otf");
   }
-  @font-face {
-    font-display: swap;
-    font-family: "Din";
-    font-style: normal;
-    font-weight: 400;
-    src: url("./fonts/din/regular.ttf");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Din";
-    font-style: normal;
-    font-weight: 500;
-    src: url("./fonts/din/medium.ttf");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Din";
-    font-style: normal;
-    font-weight: 600;
-    src: url("./fonts/din/heavy.ttf");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Din";
-    font-style: normal;
-    font-weight: 700;
-    src: url("./fonts/din/bold.ttf");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Montserrat";
-    font-style: normal;
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Din";
+  //   font-style: normal;
+  //   font-weight: 400;
+  //   src: url("./fonts/din/regular.ttf");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Din";
+  //   font-style: normal;
+  //   font-weight: 500;
+  //   src: url("./fonts/din/medium.ttf");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Din";
+  //   font-style: normal;
+  //   font-weight: 600;
+  //   src: url("./fonts/din/heavy.ttf");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Din";
+  //   font-style: normal;
+  //   font-weight: 700;
+  //   src: url("./fonts/din/bold.ttf");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Montserrat";
+  //   font-style: normal;
 
-    font-weight: 400;
-    src: url("./fonts/Montserrat/regular.ttf");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Montserrat";
-    font-style: normal;
+  //   font-weight: 400;
+  //   src: url("./fonts/Montserrat/regular.ttf");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Montserrat";
+  //   font-style: normal;
 
-    font-weight: 500;
-    src: url("./fonts/Montserrat/medium.ttf");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Montserrat";
-    font-style: normal;
+  //   font-weight: 500;
+  //   src: url("./fonts/Montserrat/medium.ttf");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Montserrat";
+  //   font-style: normal;
 
-    font-weight: 600;
-    src: url("./fonts/Montserrat/heavy.ttf");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Montserrat";
-    font-style: normal;
+  //   font-weight: 600;
+  //   src: url("./fonts/Montserrat/heavy.ttf");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Montserrat";
+  //   font-style: normal;
 
-    font-weight: 700;
-    src: url("./fonts/Montserrat/bold.ttf");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Poppins";
-    font-style: normal;
+  //   font-weight: 700;
+  //   src: url("./fonts/Montserrat/bold.ttf");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Poppins";
+  //   font-style: normal;
 
-    font-weight: 400;
-    src: url("./fonts/Poppins/regular.ttf");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Poppins";
-    font-style: normal;
+  //   font-weight: 400;
+  //   src: url("./fonts/Poppins/regular.ttf");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Poppins";
+  //   font-style: normal;
 
-    font-weight: 500;
-    src: url("./fonts/Poppins/medium.ttf");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Poppins";
-    font-style: normal;
+  //   font-weight: 500;
+  //   src: url("./fonts/Poppins/medium.ttf");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Poppins";
+  //   font-style: normal;
 
-    font-weight: 600;
-    src: url("./fonts/Poppins/heavy.ttf");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Poppins";
-    font-style: normal;
+  //   font-weight: 600;
+  //   src: url("./fonts/Poppins/heavy.ttf");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Poppins";
+  //   font-style: normal;
 
-    font-weight: 700;
-    src: url("./fonts/Poppins/bold.ttf");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Switzer";
-    font-style: normal;
-    font-weight: 300;
-    src: url("./fonts/switzer/Switzer-Light.otf") format("woff2");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Switzer";
-    font-style: normal;
-    font-weight: 400;
-    src: url("./fonts/switzer/Switzer-Regular.otf") format("woff2");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Switzer";
-    font-style: normal;
-    font-weight: 500;
-    src: url("./fonts/switzer/Switzer-Medium.otf") format("woff2");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Switzer";
-    font-style: normal;
-    font-weight: 600;
-    src: url("./fonts/switzer/Switzer-Semibold.otf") format("woff2");
-  }
-  @font-face {
-    font-display: swap;
-    font-family: "Switzer";
-    font-style: normal;
-    font-weight: 700;
-    src: url("./fonts/switzer/Switzer-Bold.otf") format("woff2");
-  }
+  //   font-weight: 700;
+  //   src: url("./fonts/Poppins/bold.ttf");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Switzer";
+  //   font-style: normal;
+  //   font-weight: 300;
+  //   src: url("./fonts/switzer/Switzer-Light.otf") format("woff2");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Switzer";
+  //   font-style: normal;
+  //   font-weight: 400;
+  //   src: url("./fonts/switzer/Switzer-Regular.otf") format("woff2");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Switzer";
+  //   font-style: normal;
+  //   font-weight: 500;
+  //   src: url("./fonts/switzer/Switzer-Medium.otf") format("woff2");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Switzer";
+  //   font-style: normal;
+  //   font-weight: 600;
+  //   src: url("./fonts/switzer/Switzer-Semibold.otf") format("woff2");
+  // }
+  // @font-face {
+  //   font-display: swap;
+  //   font-family: "Switzer";
+  //   font-style: normal;
+  //   font-weight: 700;
+  //   src: url("./fonts/switzer/Switzer-Bold.otf") format("woff2");
+  // }
 
-  @font-face {
-    font-family: "Alumni";
-    font-weight: 700;
+  // @font-face {
+  //   font-family: "Alumni";
+  //   font-weight: 700;
 
-    src: url("./fonts/alumni_sans/AlumniSans-Bold.ttf");
-    font-display: swap;
-  }
-  @font-face {
-    font-family: "Alumni";
-    font-weight: 900;
+  //   src: url("./fonts/alumni_sans/AlumniSans-Bold.ttf");
+  //   font-display: swap;
+  // }
+  // @font-face {
+  //   font-family: "Alumni";
+  //   font-weight: 900;
 
-    src: url("./fonts/alumni_sans/AlumniSans-ExtraBold.ttf");
-    font-display: swap;
-  }
+  //   src: url("./fonts/alumni_sans/AlumniSans-ExtraBold.ttf");
+  //   font-display: swap;
+  // }
 }
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {

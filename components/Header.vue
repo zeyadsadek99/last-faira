@@ -175,16 +175,24 @@ onMounted(() => {
           <!-- START:: REGISTER ROUTE -->
           <NuxtLink
             to="/select-register-type"
-            class="relative px-[12px] py-[6px]  border-1 !border-mainTheme transition-all duration-[600ms] ease-in-out rounded-[10px] text-[22px] font-arb font-semibold text-mainTheme no-underline hover:bg-[0%] hover:text-white"
+            class="relative px-[12px] py-[6px] border-1 !border-mainTheme  rounded-[10px] text-[22px] font-arb font-semibold text-mainTheme no-underline  ease-in-out duration-700 hover:text-white"
             style="
-              background-image: linear-gradient(45deg, #34bf6c 50%, transparent 50%);
+              background: linear-gradient(45deg, #34bf6c 50%, transparent 50%);
               background-size: 400%;
               background-position: 100%;
+              transition: background-position 0.6s all ease-in-out;
+            "
+            @mouseover="
+              (e) => (e.currentTarget.style.backgroundPosition = '0%')
+            "
+            @mouseleave="
+              (e) => (e.currentTarget.style.backgroundPosition = '100%')
             "
             v-if="!authStore.isAuthenticated"
           >
             {{ t("NAVBAR.register") }}
           </NuxtLink>
+
           <!-- END:: REGISTER ROUTE -->
 
           <!-- START:: ADD SUBJECT ROUTE -->
@@ -413,7 +421,6 @@ nav .navbar_wrapper .navbar_btns_wrapper a:hover .toolTip {
   transform: scale(1);
   opacity: 1;
 }
-
 
 nav .navbar_wrapper .navbar_btns_wrapper a.add_subject_route {
   padding: 6px 12px;

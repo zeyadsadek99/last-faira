@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "@fortawesome/fontawesome-free/js/all.min.js";
+
 const axios = useNuxtApp().$axios;
 const { locale, t } = useI18n();
 const i18n: any = useI18n();
@@ -140,10 +143,13 @@ onMounted(() => {
         </div>
         <!-- <GlobalTopButton /> -->
         <!-- :settings="settings" -->
-        <!-- <Footer /> -->
+        <Footer />
+       
       </div>
     </Body>
   </Html>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+</style>
