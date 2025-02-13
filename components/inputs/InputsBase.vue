@@ -178,7 +178,7 @@ watch(
   input,
   textarea,
   select {
-    @apply w-full  block  resize-none  pt-5 pb-4  text-text border px-3 border-[#CFD3D4]  rounded-lg  focus:outline-none  focus:border-primary;
+    @apply w-full  block  resize-none    text-text border px-3 border-[#CFD3D4]  rounded-2xl  focus:outline-none  focus:border-primary;
     ::placeholder {
       @apply text-gray-500;
     }

@@ -4,7 +4,8 @@ import { useRoute } from "vue-router";
 import { useAuthenticationStore } from "~/stores/authentication"; // Import Pinia store
 import axios from "axios";
 import { useI18n } from "vue-i18n";
-import AboutUs from "~/components/about/AboutUs.vue";
+import TheSlider from "~/components/home/TheSlider.vue";
+import ContactUs from "~/components/home/ContactUs.vue";
 import StudentFeaturedCourses from "~/components/home/StudentFeaturedCourses.vue";
 const { t } = useI18n();
 // Import Components
@@ -103,7 +104,7 @@ onMounted(() => {
     <!-- START:: HOME PAGE CONTENT -->
     <div class="home_wrapper fadeIn">
       <!-- START:: HERO SECTION -->
-      <!-- <HeroSlider v-if="homeData" :sliderData="homeData.sliders" /> -->
+      <TheSlider v-if="homeData" :sliderData="homeData.sliders" />
       <AboutUs v-if="homeData" :aboutUsData="homeData.about" />
       <StudentFeaturedCourses
         :Items="homeData?.newer_subject_name"
@@ -112,7 +113,7 @@ onMounted(() => {
           authStore.getAuthenticatedUserData.type != 'teacher'
         "
       />
-      <!-- <GeneralContactUs :contactUsData="homeData?.contacts" v-if="homeData" /> -->
+      <ContactUs :contactUsData="homeData?.contacts" v-if="homeData" />
 
       <!-- END:: HERO SECTION -->
     </div>

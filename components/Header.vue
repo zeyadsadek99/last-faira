@@ -139,18 +139,18 @@ onMounted(() => {
             class="hidden md:flex md:items-center md:justify-between m-0 p-0 gap-12 list-none"
           >
             <li
-              class="navbar_link"
               v-for="link in navbarLinks"
               :key="link.id"
-              v-if="
-                link?.user_type == 'all' ||
-                link?.user_type == registeredUserType
-              "
+              class="navbar_link"
             >
               <!-- {{ link.user_type == 'all' }} -->
 
               <NuxtLink
-                class="text-[22px] font-arb font-semibold text-themeText transition-all duration-100 ease-in-out hover:text-mainTheme"
+              v-if="
+                link?.user_type === registeredUserType ||
+                link?.user_type === 'all'
+              "
+                class="text-[22px] font-semibold text-themeText transition-all duration-100 ease-in-out hover:text-mainTheme"
                 :to="link.url"
               >
                 {{ t(link.text) }}
@@ -327,7 +327,7 @@ onMounted(() => {
     </div>
 
     <!-- START:: SMALL SCREENS NAVBAR -->
-    <div
+    <!-- <div
       class="small_screens_navbar_wrapper"
       :class="{ active: smallScreensNavbarIsOpen }"
     >
@@ -351,7 +351,7 @@ onMounted(() => {
           </NuxtLink>
         </li>
       </ul>
-    </div>
+    </div> -->
     <!-- END:: SMALL SCREENS NAVBAR -->
   </nav>
 </template>

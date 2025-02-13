@@ -3,7 +3,7 @@ import { useI18n } from "vue-i18n";
 
 export const useAppLangStore = defineStore("appLang", {
   state: () => ({
-    appLanguage: process
+    appLanguage: process.client
       ? localStorage.getItem("elmo3lm_elmosa3d_app_lang") || "ar"
       : "ar",
   }),
@@ -11,7 +11,7 @@ export const useAppLangStore = defineStore("appLang", {
   actions: {
     setAppLocale(payload: string) {
       this.appLanguage = payload;
-      if (process) {
+      if (process.client) {
         localStorage.setItem("elmo3lm_elmosa3d_app_lang", payload);
       }
     },
