@@ -26,12 +26,12 @@ const notificationsData = computed(() => notificationsStore.notificationsData);
 // Navbar Links
 const navbarLinks = reactive([
   { id: "home", url: "/", text: "NAVBAR.home", user_type: "all" },
-  { id: "about", url: "/about-us", text: "NAVBAR.about_us", user_type: "all" },
+  { id: "about", url: "/about", text: "NAVBAR.about_us", user_type: "all" },
   {
     id: "my_sons",
-    url: "/my-sons",
+    url: "/mySons",
     text: "NAVBAR.my_sons",
-    user_type: "parent",
+    user_type: "all",
   },
   {
     id: "subjects",
@@ -174,7 +174,7 @@ onMounted(() => {
 
           <!-- START:: REGISTER ROUTE -->
           <NuxtLink
-            to="/select-register-type"
+            to="/login/selectRegisterType"
             class="relative px-[12px] py-[6px] border-1 !border-mainTheme  rounded-[10px] text-[22px] font-arb font-semibold text-mainTheme no-underline  ease-in-out duration-700 hover:text-white"
             style="
               background: linear-gradient(45deg, #34bf6c 50%, transparent 50%);

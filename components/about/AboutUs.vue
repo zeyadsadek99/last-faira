@@ -26,12 +26,15 @@
             </h3>
           </div>
 
+          <!-- Dynamically adjust the height of section_text -->
           <div
-            class="section_text max-h-36 overflow-hidden break-words text-[24px] text-themeSecondaryText leading-[1.4]"
+            class="section_text  [word-spacing:2px] break-words overflow-hidden text-[24px] text-themeSecondaryText leading-[1.4]"
+            :class="{ 'max-h-36 ': !hideMoreButton }"
             v-html="aboutUsData"
           ></div>
 
-          <div class="section_route mt-5">
+          <!-- Hide More Button based on prop -->
+          <div class="section_route mt-5" v-if="!hideMoreButton">
             <NuxtLink class="social-link1" to="/about-us">
               {{ t("BUTTONS.more") }}
             </NuxtLink>
@@ -59,10 +62,14 @@ const { t } = useI18n();
 
 // Define props
 defineProps({
-  aboutUsData: String,
+  aboutUsData: null,
+  hideMoreButton: Boolean, // Boolean prop to control visibility of "More" button
 });
 </script>
 <style>
+.section_text p {
+  @apply mb-[16px];
+}
 .social-link1 {
   @apply relative inline-block w-[120px] text-center mt-0 px-[20px] py-[5px] text-[25px] text-white no-underline border-1 border-mainTheme rounded-[10px] transition-all duration-[600ms] ease-in-out ;
 
@@ -122,5 +129,4 @@ defineProps({
 .about_us_section_wrapper .border_wrapper .section_image_wrapper img {
   @apply filter brightness-0 invert;
 }
-
 </style>

@@ -1,28 +1,28 @@
 <template>
   <div>
     <!-- START:: MAIN LOADER -->
-    <UiLoadersMainLoader v-if="isLoading" />
+    <Loader1 v-if="isLoading" />
     <!-- END:: MAIN LOADER -->
 
     <!-- START:: PAGE CONTENT -->
     <div class="about_us_page_wrapper fadeIn" v-else>
       <!-- START:: BREADCRUMB -->
-      <StructureTheBreadcrumb>
+       <GlobalBreadCrumbs>
         <template #page_title>
           {{ t("TITLES.about_us") }}
         </template>
         <template #breadcrumb_current_page>
           {{ t("TITLES.about_us") }}
         </template>
-      </StructureTheBreadcrumb>
+      </GlobalBreadCrumbs> 
       <!-- END:: BREADCRUMB -->
 
       <!-- START:: ABOUT US PAGE CONTENT -->
-      <GeneralAboutUs :aboutUsData="homeData?.about" />
+      <AboutUs v-if="homeData" :aboutUsData="homeData.about" :hideMoreButton="true"/>
       <!-- END:: ABOUT US PAGE CONTENT -->
 
       <!-- START:: CONTACT SECTION -->
-      <GeneralContactUs :contactUsData="homeData?.contacts" />
+      <ContactUs :contactUsData="homeData?.contacts" />
       <!-- END:: CONTACT SECTION -->
     </div>
     <!-- END:: PAGE CONTENT -->
@@ -32,10 +32,10 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useNuxtApp, useAsyncData } from "#app";
-import Breadcrumb from "@/components/structure/TheBreadcrumb.vue";
-import MainLoader from "@/components/ui/loaders/MainLoader.vue";
-import AboutUs from "@/components/general/AboutUs.vue";
-import ContactUs from "@/components/general/ContactUs.vue";
+// import Breadcrumb from "@/components/structure/TheBreadcrumb.vue";
+// import MainLoader from "@/components/ui/loaders/MainLoader.vue";
+import AboutUs from "@/components/about/AboutUs.vue";
+import ContactUs from "@/components/home/ContactUs.vue";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 // ✅ Inject Axios from Plugin

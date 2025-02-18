@@ -7,6 +7,7 @@ export default {
     "./layouts/**/*.vue",
     "./pages/**/*.vue",
     "./plugins/**/*.{js,ts}",
+    "./stores/**/*.{js,ts}",
     "./app.vue",
     "./nuxt.config.{js,ts}",
     // './node_modules/@my-company/tailwind-components/**/*.js',

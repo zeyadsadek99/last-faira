@@ -23,7 +23,7 @@
           <img
             :src="slide.slider"
             alt="Slider Image"
-            class="w-full h-[400px] object-cover"
+            class="w-full h-[450px] object-fill"
           />
         </swiper-slide>
         <!-- ✅ END:: SLIDER ITEM -->

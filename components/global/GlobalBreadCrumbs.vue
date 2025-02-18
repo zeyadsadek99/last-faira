@@ -31,28 +31,37 @@ const { t } = useI18n();
 </script>
 
 <style scoped>
-/* ✅ Tailwind CSS Styles */
+/* ✅ Breadcrumb Wrapper */
 .breadcrumb_wrapper {
   @apply relative h-[200px] bg-mainTheme flex flex-col items-center justify-center overflow-hidden isolate;
 }
 
-.breadcrumb_wrapper::before,
-.breadcrumb_wrapper::after {
-  @apply absolute block w-[540px] h-[380px] bg-cover z-[-1];
-}
-
+/* ✅ Background Shapes */
 .breadcrumb_wrapper::before {
-  background-image: url("/media/shapes/light_green_book_bg_shape_left.svg");
+  content: "";
+  position: absolute;
+  width: 540px;
+  height: 380px;
+  background-size: 100%;
+  background-image: url("/assets/media/shapes/light_green_book_bg_shape_left.svg");
   bottom: -70%;
   left: -10px;
+  z-index: -1;
 }
 
 .breadcrumb_wrapper::after {
-  background-image: url("/media/shapes/light_green_book_bg_shape_right.svg");
+  content: "";
+  position: absolute;
+  width: 540px;
+  height: 380px;
+  background-size: 100%;
+  background-image: url("/assets/media/shapes/light_green_book_bg_shape_right.svg");
   bottom: -70%;
   right: -10px;
+  z-index: -1;
 }
 
+/* ✅ Title and Breadcrumb */
 .page_title {
   @apply text-white text-[3.5rem] font-bold;
 }
@@ -78,13 +87,16 @@ const { t } = useI18n();
   .breadcrumb_wrapper {
     @apply h-[110px];
   }
+  
   .breadcrumb_wrapper::before,
   .breadcrumb_wrapper::after {
     display: none;
   }
+  
   .page_title {
     @apply text-[3rem] m-0;
   }
+  
   .breadcrumb_routs {
     @apply text-[2rem] m-0;
   }

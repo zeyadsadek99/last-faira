@@ -1,11 +1,11 @@
 <template>
     <div>
-        <LoginForm></LoginForm>
+        <SelectRegisterType></SelectRegisterType>
     </div>
 </template>
 
 <script setup lang="ts">
-import LoginForm from '~/components/login/LoginForm.vue';
+import SelectRegisterType from '~/components/login/SelectRegisterType.vue';
 definePageMeta({
   layout: "auth",
 });

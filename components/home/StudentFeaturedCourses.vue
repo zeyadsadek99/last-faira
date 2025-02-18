@@ -52,7 +52,7 @@
                   <img
                     :src="course.specialization_ar"
                     alt="Course Category Image"
-                    class="w-full h-full object-cover"
+                    class="w-full h-full object-fill"
                   />
                 </div>
 
