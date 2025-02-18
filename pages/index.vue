@@ -1,66 +1,83 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useRoute, useNuxtApp } from "#app";
-import { useAuthenticationStore } from "~/stores/authentication"; // Pinia Store
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { useAuthenticationStore } from "~/stores/authentication"; // Import Pinia store
+import axios from "axios";
 import { useI18n } from "vue-i18n";
 import TheSlider from "~/components/home/TheSlider.vue";
 import ContactUs from "~/components/home/ContactUs.vue";
 import StudentFeaturedCourses from "~/components/home/StudentFeaturedCourses.vue";
-
 const { t } = useI18n();
-const route = useRoute();
-const { $fetch } = useNuxtApp(); // ✅ Using $fetch for API calls
+// Import Components
+// import HeroSlider from "@/components/structure/TheSlider.vue";
+// import AboutSection from "@/components/general/AboutUs.vue";
+// import Loader1 from "~/components/Loader1.vue";
 
-// ✅ Authentication Store (for checking user data)
+// Initialize Pinia Authentication Store
 const authStore = useAuthenticationStore();
 
-// ✅ Reactive State
+// Reactive state variables
 const isLoading = ref(false);
 const homeData = ref(null);
-
-// ✅ Get User Type from localStorage (client-side only)
+const { $axios } = useNuxtApp();
 const userType = ref(null);
 if (process.client) {
   userType.value = localStorage.getItem("elmo3lm_elmosa3d_user_type") || "visitor";
 }
+console.log(userType.value);
 
-// ✅ Compute API Endpoint Based on User Type
+// Get current route
+const route = useRoute();
 const endpoint = computed(() => {
-  switch (userType.value) {
-    case "teacher":
-      return "teacher/home";
-    case "student":
-      return "student/home";
-    case "parent":
-      return "parent/home";
-    default:
-      return "visitor/home"; // Default for visitors
-  }
+  if (userType.value === "teacher") return "teacher/home";
+  if (userType.value === "student") return "student/home";
+  if (userType.value === "parent") return "parent/home";
+  return "visitor/home"; // Default for visitors
 });
-
-// ✅ Fetch Home Page Data using Nuxt `$fetch`
 const getHomeData = async () => {
   isLoading.value = true;
   try {
-    const response = await $fetch(`https://egypt-api.faiera.com/api/${endpoint.value}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${process.client ? localStorage.getItem("elmo3lm_elmosa3d_user_token") : ""}`,
-        "Accept-language": process.client ? localStorage.getItem("elmo3lm_elmosa3d_app_lang") || "en" : "en",
-        "cache-control": "no-cache",
-        Accept: "application/json",
-      },
-    });
-
-    homeData.value = response.data;
+    const response = await $axios.get(endpoint.value );
+    homeData.value = response.data.data;
   } catch (error) {
-    console.error("❌ Error fetching home data:", error);
+    console.error("Error fetching home data:", error);
   } finally {
     isLoading.value = false;
   }
 };
+// Fetch Home Page Data using Axios
+// const getHomeData = async () => {
+//   isLoading.value = true;
+//   const userType = localStorage.getItem("elmo3lm_elmosa3d_user_type");
 
-// ✅ Scroll to Section
+//   let endpoint = "visitor/home"; // Default for visitors
+//   if (userType === "teacher") endpoint = "teacher/home";
+//   else if (userType === "student") endpoint = "student/home";
+//   else if (userType === "parent") endpoint = "parent/home";
+
+//   try {
+//     const response = await axios.get(
+//       `https://egypt-api.faiera.com/api/${endpoint}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${localStorage.getItem(
+//             "elmo3lm_elmosa3d_user_token"
+//           )}`,
+//           "Accept-language": localStorage.getItem("elmo3lm_elmosa3d_app_lang"),
+//           "cache-control": "no-cache",
+//           Accept: "application/json",
+//         },
+//       }
+//     );
+//     homeData.value = response.data.data;
+//   } catch (error) {
+//     console.error("Error fetching home data:", error);
+//   } finally {
+//     isLoading.value = false;
+//   }
+// };
+
+// Scroll to Section
 const scrollToSection = (sectionId) => {
   const section = document.getElementById(sectionId);
   if (section) {
@@ -68,7 +85,8 @@ const scrollToSection = (sectionId) => {
   }
 };
 
-// ✅ Fetch Data on Mount & Handle Route Hash Navigation
+// const documentDirection = ref("ltr");
+// Mounted Lifecycle Hook
 onMounted(() => {
   getHomeData();
   if (route.hash === "#contact") {
@@ -76,25 +94,36 @@ onMounted(() => {
       scrollToSection("contact");
     }, 1000);
   }
+  // documentDirection.value = document.documentElement.dir;
 });
+// import { ref, onMounted } from "vue";
 </script>
 
-<template>
+<template ::key="$route.path">
   <div>
-    <!-- ✅ MAIN LOADER -->
+    <!-- START:: MAIN LOADER -->
     <Loader1 v-if="isLoading" />
+    <!-- END:: MAIN LOADER -->
 
-    <!-- ✅ HOME PAGE CONTENT -->
+    <!-- START:: HOME PAGE CONTENT -->
     <div class="home_wrapper fadeIn">
-      <!-- ✅ HERO SECTION -->
+      <!-- START:: HERO SECTION -->
       <TheSlider v-if="homeData" :sliderData="homeData.sliders" />
       <AboutUs v-if="homeData" :aboutUsData="homeData.about" />
       <StudentFeaturedCourses
-        v-if="authStore.getAuthenticatedUserData.type !== 'parent' &&
-              authStore.getAuthenticatedUserData.type !== 'teacher'"
         :Items="homeData?.newer_subject_name"
+        v-if="
+          authStore.getAuthenticatedUserData.type != 'parent' &&
+          authStore.getAuthenticatedUserData.type != 'teacher'
+        "
       />
-      <ContactUs v-if="homeData" :contactUsData="homeData?.contacts" />
+      <ContactUs :contactUsData="homeData?.contacts" v-if="homeData" />
+
+      <!-- END:: HERO SECTION -->
     </div>
+    <!-- END:: HOME PAGE CONTENT -->
   </div>
 </template>
+<style>
+
+</style>
