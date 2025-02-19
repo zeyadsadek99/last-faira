@@ -122,6 +122,8 @@ export default defineNuxtConfig({
       baseURL: "https://egypt-api.faiera.com/api/",
       general: "https://egypt-api.faiera.com/api/",
       googleMapsApiKey: "AIzaSyBGrfzw_Qd0p8vzu4ySc5aAZRalrH1EgEY",
+      userType:'zoz'
+      
 
       // baseURL: "https://backend.ngtsa.com/api/website",
       // general: "https://backend.ngtsa.com/api",

@@ -2,32 +2,18 @@
   <div class="featured_courses_wrapper py-12">
     <div class="container">
       <!-- START:: HEADER WRAPPER -->
-      <div class="section_title_wrapper flex items-center justify-between">
-        <h2 class="title flex items-center justify-start gap-3">
-          <img
-            src="../../assets/media/shapes/title_icon.svg"
-            alt="Title Icon"
-            class="w-[60px]"
-          />
-          <span class="text-[2.3rem] font-bold text-themeText">{{
-            t("TITLES.recently_added")
-          }}</span>
-        </h2>
+      <GlobalHeader
+        :title="$t('TITLES.recently_added')"
+        :showLink="true"
+        routePath="/course-section/distance-learning-lessons"
+        :linkText="$t('BUTTONS.show_all')"
+      />
 
-        <div class="route_wrapper">
-          <NuxtLink
-            class="block text-[22px] font-semibold text-mainTheme w-max no-underline"
-            to="/course-section/distance-learning-lessons"
-          >
-            {{ t("BUTTONS.show_all") }}
-          </NuxtLink>
-        </div>
-      </div>
       <!-- END:: HEADER WRAPPER -->
 
       <!-- START:: FEATURED COURSES SLIDER -->
       <div class="featured_courses_slider_wrapper mt-5 relative">
-        <swiper
+        <Swiper
           :modules="[Autoplay, Navigation, Pagination]"
           :slides-per-view="4"
           :space-between="15"
@@ -42,7 +28,7 @@
           }"
           class="pb-12"
         >
-          <swiper-slide v-for="course in Items" :key="course.id" class="p-2">
+          <SwiperSlide v-for="course in Items" :key="course.id" class="p-2">
             <NuxtLink :to="'/courses-categories/' + course.id" class="block">
               <div
                 class="bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:-translate-y-2"
@@ -79,11 +65,12 @@
                 </div>
               </div>
             </NuxtLink>
-          </swiper-slide>
-        </swiper>
+          </SwiperSlide>
+        </Swiper>
 
-        <!-- ✅ Swiper Pagination Positioned Below -->
-        <div class="swiper-pagination absolute bottom-0 left-1/2 transform -translate-x-1/2"></div>
+        <div
+          class="swiper-pagination absolute bottom-0 left-1/2 transform -translate-x-1/2"
+        ></div>
       </div>
       <!-- END:: FEATURED COURSES SLIDER -->
     </div>

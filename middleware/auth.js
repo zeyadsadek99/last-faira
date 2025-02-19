@@ -1,6 +1,10 @@
-export default function auth({ next, router }) {
-    if (!localStorage.getItem("elmo3lm_elmosa3d_user_token")) {
-        return router.push("/login");
+export default defineNuxtRouteMiddleware((to, from) => {
+    // ✅ Get the auth token from cookies
+    const token = useCookie("elmo3lm_elmosa3d_user_token");
+  
+    // ✅ Redirect to login if token is missing
+    if (!token.value) {
+      return navigateTo("/login");
     }
-    return next();
-}
+  });
+  

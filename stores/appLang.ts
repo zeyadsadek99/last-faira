@@ -1,19 +1,17 @@
 import { defineStore } from "pinia";
 import { useI18n } from "vue-i18n";
+import { useCookie } from "#app"; // ✅ Import useCookie for SSR compatibility
 
 export const useAppLangStore = defineStore("appLang", {
   state: () => ({
-    appLanguage: process.client
-      ? localStorage.getItem("elmo3lm_elmosa3d_app_lang") || "ar"
-      : "ar",
+    appLanguage: useCookie("elmo3lm_elmosa3d_app_lang", { default: () => "ar" }), // ✅ Use cookies instead of localStorage
   }),
 
   actions: {
-    setAppLocale(payload: string) {
+    setAppLocale(payload:string) {
       this.appLanguage = payload;
-      if (process.client) {
-        localStorage.setItem("elmo3lm_elmosa3d_app_lang", payload);
-      }
+      const langCookie = useCookie("elmo3lm_elmosa3d_app_lang");
+      langCookie.value = payload; // ✅ Set language cookie
     },
 
     handelAppDefaultLanguage() {
@@ -32,7 +30,7 @@ export const useAppLangStore = defineStore("appLang", {
       }
     },
 
-    changeAppLanguage(payload: string) {
+    changeAppLanguage(payload:string) {
       const i18n = useI18n();
 
       if (payload === "en") {
@@ -45,7 +43,7 @@ export const useAppLangStore = defineStore("appLang", {
         document.querySelector("body")?.setAttribute("dir", "rtl");
       }
 
-      location.reload(); // Reload to apply changes
+      location.reload(); // ✅ Reload page to apply changes
     },
   },
 });

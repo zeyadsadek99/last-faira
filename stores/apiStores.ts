@@ -1,9 +1,13 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { useNuxtApp } from "#app"; // ✅ Import Nuxt App
+import { useNuxtApp, useCookie } from "#app"; // ✅ Import Nuxt App & useCookie
 
 export const useApiStore = defineStore("apiStore", () => {
-  const { $axios } = useNuxtApp(); // ✅ Use the injected axios instance
+  const { $axios } = useNuxtApp(); // ✅ Use Nuxt 3 Axios Instance
+
+  // ✅ Use Cookies Instead of Local Storage
+  const userToken = useCookie("elmo3lm_elmosa3d_user_token");
+  const appLang = useCookie("elmo3lm_elmosa3d_app_lang", { default: () => "ar" });
 
   // ✅ State
   const countries = ref(null);
@@ -17,32 +21,32 @@ export const useApiStore = defineStore("apiStore", () => {
 
   // ✅ Headers for API Requests
   const headers = computed(() => ({
-    Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTczOTg5MDA2NCwiZXhwIjoxNzcxNDI2MDY0LCJuYmYiOjE3Mzk4OTAwNjQsImp0aSI6Ik84cHRPaUFDOGZtS3NUV1kiLCJzdWIiOiIxNzQiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.tetCd0ksKooO1a7Bj5V5o8EifI30H7hX1ZpyzlazjMw`,
-    "Accept-language": localStorage.getItem("elmo3lm_elmosa3d_app_lang"),
+    Authorization: `Bearer ${userToken.value}`, // ✅ Token from Cookie
+    "Accept-language": appLang.value,
     "cache-control": "no-cache",
     Accept: "application/json",
   }));
 
-  // ✅ Actions
+  // ✅ Actions (Replacing Vuex Actions)
 
   async function getCountries() {
     try {
-      const res = await $axios.get("countries", { headers: headers.value }); // ✅ Use $axios
+      const res = await $axios.get("countries", { headers: headers.value });
       countries.value = res.data.data;
-      selectedCountryKey.value = res.data.data[0];
+      selectedCountryKey.value = res.data.data[0]; // Set default country
     } catch (error) {
       console.error("Error fetching countries:", error);
     }
   }
+
   async function getSons() {
     try {
-      const res = await $axios.get("parent/my-children", { headers: headers.value }); // ✅ Use $axios
+      const res = await $axios.get("parent/my-children", { headers: headers.value });
       sons.value = res.data.data;
     } catch (error) {
       console.error("Error fetching sons:", error);
     }
   }
-
 
   async function getCities(countryId:any) {
     try {
@@ -101,6 +105,7 @@ export const useApiStore = defineStore("apiStore", () => {
 
   return {
     countries,
+    sons,
     selectedCountryKey,
     cities,
     studyDegrees,
@@ -119,4 +124,4 @@ export const useApiStore = defineStore("apiStore", () => {
 
     countriesData,
   };
-})
+});

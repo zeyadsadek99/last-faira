@@ -1,43 +1,51 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { useAuthenticationStore } from "~/stores/authentication"; // Import Pinia store
-import axios from "axios";
+import { useAuthenticationStore } from "~/stores/authentication"; // Pinia store
 import { useI18n } from "vue-i18n";
+import { useCookie } from "#app"; // ✅ Import Nuxt Cookie Management
 import TheSlider from "~/components/home/TheSlider.vue";
 import ContactUs from "~/components/home/ContactUs.vue";
 import StudentFeaturedCourses from "~/components/home/StudentFeaturedCourses.vue";
+import ParentFeaturedCourses from "~/components/home/ParentFeaturedCourses.vue";
+import CoursesCats from "~/components/home/CoursesCats.vue";
+import StudentFeaturedTeachers from "~/components/home/StudentFeaturedTeachers.vue";
+// import Courses from "./mySons/courses.vue";
+
 const { t } = useI18n();
-// Import Components
-// import HeroSlider from "@/components/structure/TheSlider.vue";
-// import AboutSection from "@/components/general/AboutUs.vue";
-// import Loader1 from "~/components/Loader1.vue";
+const route = useRoute();
 
-// Initialize Pinia Authentication Store
-const authStore = useAuthenticationStore();
+// ✅ Replace localStorage with Cookies
+const userToken = useCookie("elmo3lm_elmosa3d_user_token"); // User token
+const userType = useCookie("elmo3lm_elmosa3d_user_type", { default: () => "visitor" });
+const appLang = useCookie("elmo3lm_elmosa3d_app_lang", { default: () => "ar" });
 
-// Reactive state variables
 const isLoading = ref(false);
 const homeData = ref(null);
 const { $axios } = useNuxtApp();
-const userType = ref(null);
-if (process.client) {
-  userType.value = localStorage.getItem("elmo3lm_elmosa3d_user_type") || "visitor";
-}
-console.log(userType.value);
 
-// Get current route
-const route = useRoute();
+console.log("User Type from Cookie:", userType.value);
+
+// ✅ Dynamically set API endpoint based on user type
 const endpoint = computed(() => {
   if (userType.value === "teacher") return "teacher/home";
   if (userType.value === "student") return "student/home";
   if (userType.value === "parent") return "parent/home";
   return "visitor/home"; // Default for visitors
 });
+
+// ✅ Fetch Home Data (Using Token from Cookie)
 const getHomeData = async () => {
   isLoading.value = true;
   try {
-    const response = await $axios.get(endpoint.value );
+    const response = await $axios.get("student/home", {
+      headers: {
+        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTczOTk1ODI4NiwiZXhwIjoxNzcxNDk0Mjg2LCJuYmYiOjE3Mzk5NTgyODYsImp0aSI6IkltSDl6RjY5cXpkV1NXUTciLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.IUp94EiqVzEttONrQ3JfAlSRBxT-kdho8hS153p_sNY`, // ✅ Token from Cookie
+        "Accept-language": appLang.value,
+        "cache-control": "no-cache",
+        Accept: "application/json",
+      },
+    });
     homeData.value = response.data.data;
   } catch (error) {
     console.error("Error fetching home data:", error);
@@ -45,39 +53,8 @@ const getHomeData = async () => {
     isLoading.value = false;
   }
 };
-// Fetch Home Page Data using Axios
-// const getHomeData = async () => {
-//   isLoading.value = true;
-//   const userType = localStorage.getItem("elmo3lm_elmosa3d_user_type");
 
-//   let endpoint = "visitor/home"; // Default for visitors
-//   if (userType === "teacher") endpoint = "teacher/home";
-//   else if (userType === "student") endpoint = "student/home";
-//   else if (userType === "parent") endpoint = "parent/home";
-
-//   try {
-//     const response = await axios.get(
-//       `https://egypt-api.faiera.com/api/${endpoint}`,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${localStorage.getItem(
-//             "elmo3lm_elmosa3d_user_token"
-//           )}`,
-//           "Accept-language": localStorage.getItem("elmo3lm_elmosa3d_app_lang"),
-//           "cache-control": "no-cache",
-//           Accept: "application/json",
-//         },
-//       }
-//     );
-//     homeData.value = response.data.data;
-//   } catch (error) {
-//     console.error("Error fetching home data:", error);
-//   } finally {
-//     isLoading.value = false;
-//   }
-// };
-
-// Scroll to Section
+// ✅ Scroll to Section (for Contact Us)
 const scrollToSection = (sectionId) => {
   const section = document.getElementById(sectionId);
   if (section) {
@@ -85,8 +62,7 @@ const scrollToSection = (sectionId) => {
   }
 };
 
-// const documentDirection = ref("ltr");
-// Mounted Lifecycle Hook
+// ✅ Fetch Data on Mount
 onMounted(() => {
   getHomeData();
   if (route.hash === "#contact") {
@@ -94,36 +70,29 @@ onMounted(() => {
       scrollToSection("contact");
     }, 1000);
   }
-  // documentDirection.value = document.documentElement.dir;
 });
-// import { ref, onMounted } from "vue";
 </script>
 
-<template ::key="$route.path">
+<template>
   <div>
-    <!-- START:: MAIN LOADER -->
+    <!-- ✅ Loader -->
     <Loader1 v-if="isLoading" />
-    <!-- END:: MAIN LOADER -->
 
-    <!-- START:: HOME PAGE CONTENT -->
+    <!-- ✅ Home Content -->
     <div class="home_wrapper fadeIn">
-      <!-- START:: HERO SECTION -->
       <TheSlider v-if="homeData" :sliderData="homeData.sliders" />
       <AboutUs v-if="homeData" :aboutUsData="homeData.about" />
+      <CoursesCats :courseCatsData="homeData?.categories" />
+      <ParentFeaturedCourses :Items="homeData?.my_children"  />
+      <StudentFeaturedTeachers
+                :Items="homeData?.teachers"
+            />
       <StudentFeaturedCourses
         :Items="homeData?.newer_subject_name"
-        v-if="
-          authStore.getAuthenticatedUserData.type != 'parent' &&
-          authStore.getAuthenticatedUserData.type != 'teacher'
-        "
+        v-if="userType !== 'parent' && userType !== 'teacher'"
       />
-      <ContactUs :contactUsData="homeData?.contacts" v-if="homeData" />
 
-      <!-- END:: HERO SECTION -->
+      <ContactUs :contactUsData="homeData?.contacts" v-if="homeData" />
     </div>
-    <!-- END:: HOME PAGE CONTENT -->
   </div>
 </template>
-<style>
-
-</style>

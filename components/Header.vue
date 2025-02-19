@@ -35,9 +35,9 @@ const navbarLinks = reactive([
   },
   {
     id: "subjects",
-    url: "/course-section/distance-learning-lessons",
+    url: "/courses",
     text: "NAVBAR.subjects",
-    user_type: "student",
+    user_type: "all",
   },
   {
     id: "teachers",
@@ -108,7 +108,7 @@ const stickyNavbar = () => {
 
 // Lifecycle Hooks
 onMounted(() => {
-  stickyNavbar();
+  // stickyNavbar();
   if (isAuthenticated.value) {
     notificationsStore.getNotifications();
   }
