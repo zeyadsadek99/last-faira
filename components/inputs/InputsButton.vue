@@ -20,6 +20,12 @@ defineProps<Props>();
 </template>
 
 <style lang="scss" scoped>
+// button {
+//   background-image: linear-gradient(45deg, transparent 50%, var(--main_theme_clr) 50%);
+//   background-position: 100%;
+//   background-size: 400%;
+//   transition: background-position 0.6s all ease-in-out;
+// }
 /* HTML: <div class="loader"></div> */
 .loader {
   width: 25px;

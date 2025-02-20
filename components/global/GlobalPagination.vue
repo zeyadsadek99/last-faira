@@ -1,85 +1,80 @@
 <template>
-  <v-pagination
-    v-if="pagination.last_page > 1"
-    v-model="pagination.current_page"
-    :pages="pagination.last_page"
-    :hideFirstButton="false"
-    :hideLastButton="false"
-    :range-size="0"
-    @update:modelValue="fetchData"
-    :class="classes"
-  />
+  <div v-if="lastPage > 1" class="pagination-container">
+    <ul>
+      <li
+        v-for="index in lastPage"
+        :key="index"
+        v-if="
+          Math.abs(currentPage - index) < 4 ||
+          index === lastPage ||
+          index === 1
+        "
+        :class="{ 'dots': index === lastPage && Math.abs(currentPage - index) > 4 }"
+      >
+        <button
+          type="button"
+          @click="paginationClick(index)"
+          :class="{
+            'active': index === currentPage,
+            'last': lastPage === index && Math.abs(currentPage - index) > 4
+          }"
+        >
+          {{ index }}
+        </button>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script setup>
-import VPagination from "@hennge/vue3-pagination";
-
 defineProps({
-  pagination: {
-    required: true,
-  },
-  classes: {
-    required: false,
-  },
+  lastPage: Number,
+  currentPage: Number
 });
 
-const router = useRouter();
-const route = useRoute();
+const emit = defineEmits(["paginationClick"]);
 
-function fetchData(e) {
-  router
-    .push({
-      query: Object.assign({}, route.query, {
-        page: e,
-      }),
-    })
-    .then(() =>
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      })
-    );
-}
+const paginationClick = (pageNum) => {
+  emit("paginationClick", pageNum);
+};
 </script>
-<style lang="scss">
-.Pagination {
-  @apply my-7 flex justify-end;
-  li {
-    @apply mx-1;
-    button {
-      @apply flex h-5 w-5 items-center justify-center rounded-full border border-primary p-5 font-bold text-primary;
-    }
-    &.PaginationControl {
-      @apply flex h-[42px] w-[42px] items-center justify-center rounded-full border border-primary rtl:rotate-180;
-      svg {
-        @apply w-[20px];
-        path {
-          fill: var(--website_primary_color) !important;
-        }
-        &.Control-active {
-          @apply cursor-pointer;
-        }
-      }
-    }
 
-    &.PaginationControl:first-child,
-    &.PaginationControl:last-child {
-      @apply hidden;
-    }
-    &:has(.DotsHolder) {
-      @apply flex h-5 w-5 items-center justify-center rounded-full border border-primary p-5;
-      svg {
-        @apply w-[15px];
-        path {
-          fill: #fdb933 !important;
-        }
-      }
-    }
+<style scoped>
+/* ✅ Pagination Container */
+.pagination-container {
+  @apply w-full py-6 text-center;
+}
 
-    button.Page.Page-active {
-      @apply text-white;
-      background-color: #fdb933 !important;
-    }
-  }
+/* ✅ Pagination List */
+.pagination-container ul {
+  @apply flex justify-center space-x-2;
+}
+
+/* ✅ Pagination List Item */
+.pagination-container ul li {
+  @apply relative w-9 h-9 text-xl text-themeText;
+}
+
+/* ✅ Pagination Button */
+.pagination-container ul li button {
+  @apply w-full h-full border border-gray-200 rounded-md 
+         font-bold text-mainTheme bg-gray-100 transition 
+         hover:bg-mainTheme hover:text-white;
+}
+
+/* ✅ Active Button */
+.pagination-container ul li button.active {
+  @apply bg-mainTheme border-mainTheme text-white;
+}
+
+/* ✅ Last Page Button */
+.pagination-container ul li button.last {
+  @apply ml-5;
+}
+
+/* ✅ Dots Indicator */
+.pagination-container ul li.dots::before {
+  content: "...";
+  @apply absolute text-xl text-darkGray left-1/2 transform -translate-x-1/2;
 }
 </style>

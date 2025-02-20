@@ -53,8 +53,8 @@ body .theme--light.v-application {
   color: var(--theme_text_clr);
 }
 body .main-content {
-  position: relative !important;
-  z-index: 1 !important;
+  position: relative ;
+  z-index: 1 ;
 }
 
 input:-webkit-autofill,

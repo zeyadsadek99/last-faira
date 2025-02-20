@@ -18,46 +18,45 @@
     <!-- ✅ END:: FORM TITLE -->
 
     <!-- ✅ START:: FORM -->
-    <div class="form-wrapper w-[30%]  bg-white shadow-md rounded-lg p-6">
-      <form @submit.prevent="validateLoginForm" class="space-y-6">
+    <div class="form-wrapper w-[30%] bg-white shadow-md rounded-lg p-6">
+      <VeeForm
+        @submit="submitLoginForm"
+        :validation-schema="schema"
+        class="space-y-6"
+        data-aos="fade-up"
+        data-aos-duration="1200"
+      >
         <!-- ✅ Phone Input -->
         <div class="relative">
-          
           <div class="input-wrapper flex justify-between" dir="ltr">
-            <button @click="toggleCountryMenu" type="button" class="flex items-center text-gray-700">
+            <button
+              @click="toggleCountryMenu"
+              type="button"
+              class="flex items-center text-gray-700"
+            >
               <img :src="selectedCountry?.flag" alt="Flag" class="w-5 h-3" />
               <span class="ml-2">{{ selectedCountry?.key }}</span>
             </button>
-            <input
-              type="number"
-              v-model="loginData.phone"
-              class="flex-1 bg-transparent outline-none p-2 text-gray-700 text-sm"
+            <InputsBase
+              type="phone"
+              id="mobile"
+              name="mobile"
+              size="60"
               :placeholder="t('PLACEHOLDERS.phone')"
+              class="w-full"
             />
           </div>
         </div>
-        
-        <!-- <div class="mt-5 custom_input">
-          <base-password
-            id="password"
-            name="password"
-            :placeholder="$t('LABELS.Enter', { name: $t('LABELS.password') })"
-            icon="key"
-          />
-        </div> -->
         <!-- ✅ Password Input -->
         <div class="relative">
-         
           <div class="input-wrapper">
-            <input
-              :type="isPasswordVisible ? 'text' : 'password'"
-              v-model="loginData.password"
-              class="flex-1 bg-transparent outline-none p-2 text-gray-700 text-sm"
+            <InputsPassword
+              id="password"
+              name="password"
               :placeholder="t('PLACEHOLDERS.password')"
+              icon="key"
+              class="w-full"
             />
-            <button type="button" @click="togglePasswordVisibility">
-              <i :class="isPasswordVisible ? 'fa fa-eye-slash text-gray-500' : 'fa fa-eye text-gray-500'"></i>
-            </button>
           </div>
         </div>
 
@@ -67,16 +66,38 @@
         </NuxtLink>
 
         <!-- ✅ Submit Button -->
-        <button type="submit" class="btn-primary w-full">
-          {{ t("BUTTONS.login") }}
-          <span v-if="isLoading" class="loader"></span>
-        </button>
-      </form>
+
+        <InputsButton
+          type="submit"
+          :name="t('BUTTONS.login')"
+          class="w-full relative  px-[12px] py-[6px] border-1 !border-mainTheme rounded-[10px] text-[22px] font-semibold text-white no-underline ease-in-out duration-700 hover:text-maintheme"
+          style="
+            background: linear-gradient(
+              45deg,
+              transparent 50%,
+              var(--main_theme_clr) 50%
+            );
+            background-position: 100%;
+            background-size: 400%;
+          "
+        />
+      </VeeForm>
+      <Teleport to="body">
+        <global-success
+          v-if="success"
+          @close="success = false"
+          :message="message"
+        />
+        <global-fail v-if="fail" @close="fail = false" :message="message" />
+      </Teleport>
 
       <!-- ✅ Register Route -->
       <p class="register-route">
         {{ t("BUTTONS.dont_have_account") }}
-        <NuxtLink to="/register" class="text-mainTheme font-semibold hover:underline">
+        <NuxtLink
+          to="/register"
+          class="text-mainTheme font-semibold hover:underline"
+        >
           {{ t("BUTTONS.register") }}
         </NuxtLink>
       </p>
@@ -89,6 +110,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useApiStore } from "@/stores/apiStores";
+import InputsPassword from "../inputs/InputsPassword.vue";
 
 const { t } = useI18n();
 const apiStore = useApiStore();
@@ -128,25 +150,122 @@ const validateLoginForm = async () => {
   await submitLoginForm();
 };
 
+// import { useCookies } from "vue3-cookies";
+import { useNuxtApp } from "#app";
+import { useToast } from "vue-toastification"; // ✅ Using Vue Toastification
+import { useAuthenticationStore } from "~/stores/authentication"; // ✅ Pinia store for authentication
+
+const { cookies } = useCookies();
+const { $axios } = useNuxtApp();
+const toast = useToast(); // ✅ Initialize Toast
+const authStore = useAuthenticationStore();
+const schema = yup.object({
+  name: yup
+    .string()
+    .required(t("ERRORS.isRequired", { name: t("LABELS.name") })),
+  email: yup
+    .string()
+    .email(t("ERRORS.validEmail"))
+    .required(t("ERRORS.isRequired", { name: t("LABELS.Email") }))
+    .test("email", t("ERRORS.validEmail"), (value) => {
+      return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+(?:\.[a-z])*$/.test(
+        value
+      );
+    }),
+  mobile: yup
+    .string()
+    .required(t("ERRORS.isRequired", { name: t("LABELS.Phone") }))
+    .matches(/^[0-9]{10}$/, t("ERRORS.invalidPhone")),
+  country: yup
+    .string()
+    .required(t("ERRORS.isRequired", { name: t("LABELS.COUNTRY") }))
+    .oneOf(["sa", "eg", "ae"], t("ERRORS.invalidCountry")),
+
+  message: yup
+    .string()
+    .required(t("ERRORS.isRequired", { name: t("LABELS.Message") })),
+});
 const submitLoginForm = async () => {
-  isLoading.value = true;
-  const payload = {
-    country_id: selectedCountry.value.id,
-    identifier: loginData.value.phone.replace(/^[0.]+/, ""),
-    password: loginData.value.password,
-  };
+  isWaitingRequest.value = true;
+
+  const theData = new FormData();
+  // ✅ Append Static Data
+  theData.append("type", "ios");
+  theData.append("device_token", "static_device_token");
+
+  // ✅ Append User Login Data
+  theData.append("country_id", countriesData.value.selectedCountry.id);
+  theData.append("identifier", loginData.value.phone.replace(/^[0.]+/, ""));
+  theData.append("password", loginData.value.password);
 
   try {
-    const response = await apiStore.login(payload);
-    alert(t("VALIDATION.login_success"));
-    localStorage.setItem("user_token", response.token);
-    location.reload();
-  } catch (error) {
-    alert(error.message || t("VALIDATION.login_failed"));
-  } finally {
-    isLoading.value = false;
+    // ✅ Send Login Request
+    const res = await $axios.post("login", theData, {
+      headers: {
+        Authorization: `Bearer ${cookies.get("elmo3lm_elmosa3d_user_token") || ""}`,
+        "Accept-language": cookies.get("elmo3lm_elmosa3d_app_lang") || "ar",
+        "cache-control": "no-cache",
+        Accept: "application/json",
+      },
+    });
+
+    isWaitingRequest.value = false;
+
+    // ✅ Show Success Message with Vue Toastification
+    toast.success(t("VALIDATION.login_success"), {
+      timeout: 3000,
+      position: "top-right",
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: true,
+      draggable: true,
+      draggablePercent: 0.6,
+      showCloseButtonOnHover: true,
+      icon: true,
+      rtl: t("iziToastConfigs.dir") === "rtl",
+    });
+
+    // ✅ Store User Data in Pinia & Cookies
+    authStore.setAuthenticatedUserData({
+      type: res.data.data.user_type,
+      token: res.data.data.token.access_token,
+      avatar: res.data.data.profile_image,
+    });
+
+    cookies.set("elmo3lm_elmosa3d_user_id", res.data.data.id);
+    cookies.set("elmo3lm_elmosa3d_user_token", res.data.data.token.access_token, { path: "/", secure: true });
+    cookies.set("elmo3lm_elmosa3d_user_type", res.data.data.user_type, { path: "/", secure: true });
+
+    // ✅ Store Additional Data for Students
+    if (res.data.data?.user_type === "student") {
+      cookies.set("elmo3lm_elmosa3d_student_parent_phone", res.data.data?.child_parent?.parent?.phone, { path: "/" });
+      cookies.set("elmo3lm_elmosa3d_student_parent_key", JSON.stringify(res.data.data?.child_parent?.parent?.country), { path: "/" });
+    }
+
+    clearLoginFormData();
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  } catch (err) {
+    isWaitingRequest.value = false;
+    console.error(err);
+
+    // ✅ Show Error Message with Vue Toastification
+    toast.error(err.response?.data?.message || t("VALIDATION.login_failed"), {
+      timeout: 4000,
+      position: "top-right",
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: true,
+      draggable: true,
+      draggablePercent: 0.6,
+      showCloseButtonOnHover: true,
+      icon: true,
+      rtl: t("iziToastConfigs.dir") === "rtl",
+    });
   }
 };
+
 </script>
 
 <style scoped>
@@ -275,7 +394,7 @@ textarea::-webkit-scrollbar-thumb {
 
 /* ✅ Form Wrapper */
 .form-wrapper {
-  @apply overflow-x-hidden py-8  ;
+  @apply overflow-x-hidden py-8;
 }
 
 /* ✅ Hide Scrollbar */

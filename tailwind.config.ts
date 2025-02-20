@@ -102,6 +102,9 @@ export default {
     },
     maxWidth: {
       '3/4': '75%',
+      '2xl': '42rem', // Add max-w-2xl manually
+      'xs': '2rem', // Add max-w-2xl manually
+
     },
     container: {
       center: true,

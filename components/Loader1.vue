@@ -20,7 +20,7 @@ defineProps({});
 <style scoped>
 /* ✅ Tailwind CSS Loader Styling */
 .main_loader_wrapper {
-  @apply fixed left-0 top-0 w-full h-screen flex items-center justify-center  z-30;
+  @apply fixed left-0 top-0 w-full h-screen flex items-center justify-center  z-50;
 }
 
 /* ✅ Loader Customization */

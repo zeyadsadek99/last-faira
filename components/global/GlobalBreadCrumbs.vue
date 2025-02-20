@@ -33,7 +33,7 @@ const { t } = useI18n();
 <style scoped>
 /* ✅ Breadcrumb Wrapper */
 .breadcrumb_wrapper {
-  @apply relative h-[200px] bg-mainTheme flex flex-col items-center justify-center overflow-hidden isolate;
+  @apply relative h-[200px] z-30 bg-mainTheme flex flex-col items-center justify-center overflow-hidden isolate;
 }
 
 /* ✅ Background Shapes */
