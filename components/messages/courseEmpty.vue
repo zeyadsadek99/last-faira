@@ -1,31 +1,47 @@
-<script setup>
-import UserEmptyMessage from "~/components/UserEmptyMessage.vue";
-</script>
-
 <template>
-  <div class="empty-courses-message-wrapper">
-    <GlobalMessage>
-      <!-- ✅ Image Slot -->
-      <template #image>
-        <img
-          src="/assets/media/empty_messages/empty_courses.png"
-          alt="Empty Message Image"
-          width="250"
-          height="130"
-          class="object-contain"
-        />
-      </template>
+  <div class="empty-message">
+    <!-- ✅ Image Slot -->
+    <div v-if="imageSrc" class="image-wrapper">
+      <img :src="imageSrc" :alt="imageAlt" />
+    </div>
 
-      <!-- ✅ Message Slot -->
-      <template #message>
-        <h2 class="message-title">{{ $t("TITLES.empty_courses") }}</h2>
-      </template>
-    </GlobalMessage>
+    <!-- ✅ Message Slot -->
+    <div v-if="message" class="text-wrapper">
+      <h2 class="message-title">{{ message }}</h2>
+    </div>
   </div>
 </template>
 
+<script setup>
+defineProps({
+  imageSrc: {
+    type: String,
+    required: true,
+  },
+  imageAlt: {
+    type: String,
+    default: "Empty Message Image",
+  },
+  message: {
+    type: String,
+    required: true,
+  },
+});
+</script>
+
 <style scoped>
-.empty-courses-message-wrapper {
-  @apply flex items-center justify-center min-h-[70vh];
+/* ✅ Wrapper */
+.empty-message {
+  @apply flex flex-col items-center justify-center h-[70vh] gap-4;
+}
+
+/* ✅ Image */
+.image-wrapper img {
+  @apply object-contain w-[250px] h-[130px];
+}
+
+/* ✅ Text */
+.message-title {
+  @apply text-mainTheme font-medium text-[2rem] text-center;
 }
 </style>

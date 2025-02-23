@@ -1,23 +1,20 @@
 <template>
-  <div v-if="lastPage > 1" class="pagination-container">
+  <div v-if="totalPages > 1" class="pagination">
     <ul>
+      {{ totalPages }}
       <li
-        v-for="index in lastPage"
+        v-for="index in totalPages"
         :key="index"
         v-if="
-          Math.abs(currentPage - index) < 4 ||
-          index === lastPage ||
+          Math.abs(props.current_page - index) < 4 ||
+          index === totalPages ||
           index === 1
         "
-        :class="{ 'dots': index === lastPage && Math.abs(currentPage - index) > 4 }"
       >
         <button
           type="button"
           @click="paginationClick(index)"
-          :class="{
-            'active': index === currentPage,
-            'last': lastPage === index && Math.abs(currentPage - index) > 4
-          }"
+          :class="{ 'active': index === currentPage }"
         >
           {{ index }}
         </button>
@@ -27,54 +24,37 @@
 </template>
 
 <script setup>
-defineProps({
-  lastPage: Number,
-  currentPage: Number
+import { defineProps, defineEmits, computed } from "vue";
+
+const props = defineProps({
+  last_page: { type: Number, required: true },
+  current_page: { type: Number, required: true }
 });
 
 const emit = defineEmits(["paginationClick"]);
 
+const totalPages = computed(() => props.last_page || 1);
+
 const paginationClick = (pageNum) => {
+  console.log("Clicked Page:", pageNum); // Debugging
   emit("paginationClick", pageNum);
 };
 </script>
 
 <style scoped>
-/* ✅ Pagination Container */
-.pagination-container {
-  @apply w-full py-6 text-center;
+.pagination {
+  @apply w-full flex justify-center py-6;
 }
 
-/* ✅ Pagination List */
-.pagination-container ul {
-  @apply flex justify-center space-x-2;
+.pagination ul {
+  @apply flex space-x-2;
 }
 
-/* ✅ Pagination List Item */
-.pagination-container ul li {
-  @apply relative w-9 h-9 text-xl text-themeText;
+.pagination ul li button {
+  @apply w-9 h-9 border rounded-md text-mainTheme bg-gray-100 transition hover:bg-mainTheme hover:text-white;
 }
 
-/* ✅ Pagination Button */
-.pagination-container ul li button {
-  @apply w-full h-full border border-gray-200 rounded-md 
-         font-bold text-mainTheme bg-gray-100 transition 
-         hover:bg-mainTheme hover:text-white;
-}
-
-/* ✅ Active Button */
-.pagination-container ul li button.active {
-  @apply bg-mainTheme border-mainTheme text-white;
-}
-
-/* ✅ Last Page Button */
-.pagination-container ul li button.last {
-  @apply ml-5;
-}
-
-/* ✅ Dots Indicator */
-.pagination-container ul li.dots::before {
-  content: "...";
-  @apply absolute text-xl text-darkGray left-1/2 transform -translate-x-1/2;
+.pagination ul li button.active {
+  @apply bg-mainTheme text-white;
 }
 </style>

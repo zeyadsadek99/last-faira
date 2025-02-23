@@ -82,7 +82,9 @@ export default {
       gray: colors.gray,
       red: colors.red,
       blue:colors.blue,
-      transparent:colors.transparent
+      transparent:colors.transparent,
+      green:colors.green,
+      yellow:colors.yellow
     },
     screens: {
       'xs': '425px',

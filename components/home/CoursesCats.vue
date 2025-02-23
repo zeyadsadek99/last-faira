@@ -13,7 +13,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
           <div v-for="category in courseCatsData" :key="category.id">
             <SolidCard>
-              <NuxtLink :to="`/course-section/${category.id}/${category.special_key}`" class="card_content_wrapper">
+              <NuxtLink :to="`/courses/${category.id}`" class="card_content_wrapper">
                 <h3>{{ category.name }}</h3>
                 <img :src="category.category_image" :alt="category.name" class="w-[145px] h-[160px]" />
               </NuxtLink>

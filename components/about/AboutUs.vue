@@ -35,7 +35,7 @@
 
           <!-- Hide More Button based on prop -->
           <div class="section_route mt-5" v-if="!hideMoreButton">
-            <NuxtLink class="social-link1" to="/about-us">
+            <NuxtLink class="social-link1" to="/about">
               {{ t("BUTTONS.more") }}
             </NuxtLink>
           </div>

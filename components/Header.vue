@@ -43,14 +43,14 @@ const navbarLinks = reactive([
     id: "teachers",
     url: "/teachers",
     text: "NAVBAR.teachers",
-    user_type: "student",
+    user_type: "all",
   },
   { id: "store", url: "/store", text: "NAVBAR.store", user_type: "all" },
   {
     id: "added_subjects",
     url: "/added-subjects",
     text: "NAVBAR.added_subjects",
-    user_type: "teacher",
+    user_type: "all",
   },
 ]);
 
