@@ -7,16 +7,16 @@
     <div v-else class="courses-section fadeIn">
       <!-- ✅ Image Header -->
       <ImageHeader>
-        <div class="header-container flex items-center justify-start h-full">
+        <div class="header-container container flex items-center justify-start h-full">
           <div class="container mx-auto px-4">
             <div class="header-title">
               <h1
-                class="w-[30%] text-[5rem] font-bold mb-0"
+                class=" text-[5rem] font-bold mb-0"
                 v-if="$route.params.id !== 'distance-learning-lessons'"
               >
                 {{ categoryData.name }}
               </h1>
-              <h1 class="w-[30%] text-[5rem] font-bold mb-0" v-else>
+              <h1 class=" text-[5rem] font-bold mb-0" v-else>
                 {{ $t("TITLES.all_courses") }}
               </h1>
             </div>
@@ -196,8 +196,13 @@ const getCoursesData = async () => {
 };
 
 // ✅ Redirect Route Handling
+// const redirectRoute = (course_id) => {
+//   return registeredUserType.value === "teacher"
+//     ? `/teacher/course-details/online/${course_id}`
+//     : `/courses-categories/${course_id}`;
+// };
 const redirectRoute = (course_id) => {
-  return registeredUserType.value === "teacher"
+  return registeredUserType.value !== "teacher"
     ? `/teacher/course-details/online/${course_id}`
     : `/courses-categories/${course_id}`;
 };

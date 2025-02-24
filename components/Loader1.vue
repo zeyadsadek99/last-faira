@@ -20,7 +20,7 @@ defineProps({});
 <style scoped>
 /* ✅ Tailwind CSS Loader Styling */
 .main_loader_wrapper {
-  @apply fixed left-0 top-0 w-full h-screen flex items-center justify-center  z-50;
+  @apply fixed left-0  w-full h-screen flex items-center justify-center bg-themeBg  z-50;
 }
 
 /* ✅ Loader Customization */
@@ -32,17 +32,17 @@ defineProps({});
 .book {
   --color: var(--main_theme_clr);
   --duration: 6.8s;
-  @apply w-8 h-3 relative mt-8;
+  @apply w-8 h-3  relative mt-8;
 }
 
 .book .inner {
-  @apply w-8 h-3 relative origin-[2px_2px] rotate-[-90deg];
+  @apply w-8 h-3 relative origin-[2px_2px] -rotate-90;
   animation: book var(--duration) ease infinite;
 }
 
 .book .inner .left,
 .book .inner .right {
-  @apply w-[60px] h-[4px] absolute top-0 rounded bg-[var(--color)];
+  @apply w-[60px] h-[4px] absolute top-0 rounded bg-mainTheme;
 }
 
 .book .inner .left::before,
@@ -59,7 +59,7 @@ defineProps({});
 }
 
 .book .inner .right {
-  @apply left-[28px] origin-[2px_2px] rotate-[-90deg];
+  @apply left-[28px] origin-[2px_2px] -rotate-90;
   animation: right var(--duration) ease infinite;
 }
 
@@ -73,7 +73,7 @@ defineProps({});
 
 /* ✅ Page Flipping Animation */
 .book ul li {
-  @apply h-[4px] w-[48px] absolute right-0 top-[-10px] rounded bg-[var(--color)];
+  @apply h-[4px] w-[48px] absolute origin-[100%_2px] right-0 top-[-10px] rounded-sm bg-mainTheme;
   transform: rotateZ(0deg) translateX(-18px);
   animation-duration: var(--duration);
   animation-timing-function: ease;
@@ -139,83 +139,11 @@ defineProps({});
 }
 
 /* ✅ Animations */
-@keyframes book {
-  4% {
-    transform: rotateZ(-90deg);
-  }
-  10%,
-  40% {
-    transform: rotateZ(0deg);
-    transform-origin: 2px 2px;
-  }
-  40%,
-  60% {
-    transform-origin: 30px 2px;
-  }
-  46%,
-  54% {
-    transform: rotateZ(90deg);
-  }
-  60%,
-  90% {
-    transform: rotateZ(0deg);
-    transform-origin: 2px 2px;
-  }
-  96% {
-    transform: rotateZ(-90deg);
-  }
-}
-
-
-@keyframes left {
-  4% {
-    transform: rotateZ(90deg);
-  }
-  10%,
-  40% {
-    transform: rotateZ(0deg);
-  }
-  46%,
-  54% {
-    transform: rotateZ(90deg);
-  }
-  60%,
-  90% {
-    transform: rotateZ(0deg);
-  }
-  96% {
-    transform: rotateZ(90deg);
-  }
-}
-
-@keyframes right {
-  4% {
-    transform: rotateZ(-90deg);
-  }
-  10%,
-  40% {
-    transform: rotateZ(0deg);
-  }
-  46%,
-  54% {
-    transform: rotateZ(-90deg);
-  }
-  60%,
-  90% {
-    transform: rotateZ(0deg);
-  }
-  96% {
-    transform: rotateZ(-90deg);
-  }
-}
-
-/* ✅ Page Flipping Keyframes */
 @keyframes page-0 {
   4% {
     transform: rotateZ(0deg) translateX(-18px);
   }
-  13%,
-  54% {
+  13%, 54% {
     transform: rotateZ(180deg) translateX(-18px);
   }
   63% {
@@ -226,8 +154,7 @@ defineProps({});
   5.86% {
     transform: rotateZ(0deg) translateX(-18px);
   }
-  14.74%,
-  55.86% {
+  14.74%, 55.86% {
     transform: rotateZ(180deg) translateX(-18px);
   }
   64.74% {
@@ -238,8 +165,7 @@ defineProps({});
   7.72% {
     transform: rotateZ(0deg) translateX(-18px);
   }
-  16.48%,
-  57.72% {
+  16.48%, 57.72% {
     transform: rotateZ(180deg) translateX(-18px);
   }
   66.48% {
@@ -250,8 +176,7 @@ defineProps({});
   9.58% {
     transform: rotateZ(0deg) translateX(-18px);
   }
-  18.22%,
-  59.58% {
+  18.22%, 59.58% {
     transform: rotateZ(180deg) translateX(-18px);
   }
   68.22% {
@@ -262,12 +187,221 @@ defineProps({});
   11.44% {
     transform: rotateZ(0deg) translateX(-18px);
   }
-  19.96%,
-  61.44% {
+  19.96%, 61.44% {
     transform: rotateZ(180deg) translateX(-18px);
   }
   69.96% {
     transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-5 {
+  13.3% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  21.7%, 63.3% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  71.7% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-6 {
+  15.16% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  23.44%, 65.16% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  73.44% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-7 {
+  17.02% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  25.18%, 67.02% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  75.18% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-8 {
+  18.88% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  26.92%, 68.88% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  76.92% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-9 {
+  20.74% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  28.66%, 70.74% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  78.66% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-10 {
+  22.6% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  30.4%, 72.6% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  80.4% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-11 {
+  24.46% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  32.14%, 74.46% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  82.14% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-12 {
+  26.32% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  33.88%, 76.32% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  83.88% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-13 {
+  28.18% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  35.62%, 78.18% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  85.62% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-14 {
+  30.04% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  37.36%, 80.04% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  87.36% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-15 {
+  31.9% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  39.1%, 81.9% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  89.1% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-16 {
+  33.76% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  40.84%, 83.76% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  90.84% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-17 {
+  35.62% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  42.58%, 85.62% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  92.58% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes page-18 {
+  37.48% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+  44.32%, 87.48% {
+    transform: rotateZ(180deg) translateX(-18px);
+  }
+  94.32% {
+    transform: rotateZ(0deg) translateX(-18px);
+  }
+}
+@keyframes left {
+  4% {
+    transform: rotateZ(90deg);
+  }
+  10%, 40% {
+    transform: rotateZ(0deg);
+  }
+  46%, 54% {
+    transform: rotateZ(90deg);
+  }
+  60%, 90% {
+    transform: rotateZ(0deg);
+  }
+  96% {
+    transform: rotateZ(90deg);
+  }
+}
+@keyframes right {
+  4% {
+    transform: rotateZ(-90deg);
+  }
+  10%, 40% {
+    transform: rotateZ(0deg);
+  }
+  46%, 54% {
+    transform: rotateZ(-90deg);
+  }
+  60%, 90% {
+    transform: rotateZ(0deg);
+  }
+  96% {
+    transform: rotateZ(-90deg);
+  }
+}
+@keyframes book {
+  4% {
+    transform: rotateZ(-90deg);
+  }
+  10%, 40% {
+    transform: rotateZ(0deg);
+    transform-origin: 2px 2px;
+  }
+  40.01%, 59.99% {
+    transform-origin: 30px 2px;
+  }
+  46%, 54% {
+    transform: rotateZ(90deg);
+  }
+  60%, 90% {
+    transform: rotateZ(0deg);
+    transform-origin: 2px 2px;
+  }
+  96% {
+    transform: rotateZ(-90deg);
   }
 }
 </style>

@@ -46,7 +46,7 @@
               class="p-5 bg-white rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl"
             >
               <NuxtLink
-                :to="`/teacher/${teacher.id}`"
+                :to="`/teachers/${teacher.id}`"
                 class="flex items-center gap-4"
               >
                 <!-- ✅ Smaller Image -->

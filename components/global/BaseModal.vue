@@ -43,7 +43,7 @@
   
   /* ✅ Modal Content */
   .main-body {
-    @apply relative w-[35%] max-h-[85vh] bg-white p-6 rounded-lg shadow-lg overflow-y-auto;
+    @apply relative w-[40%] max-h-[85vh] bg-white px-8 py-5 rounded-lg shadow-lg overflow-y-auto;
   }
   
   /* ✅ Responsive: Adjust modal width on small screens */

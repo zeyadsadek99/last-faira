@@ -7,7 +7,7 @@
       <div class="courses-section-wrapper fadeIn" v-else>
         <!-- ✅ Image Header -->
         <ImageHeader>
-          <div class="header-container flex items-center justify-start h-full">
+          <div class="header-container container flex items-center justify-start h-full">
             <div class="container mx-auto px-4">
               <div class="header-title-wrapper">
                 <h1 v-if="$route.params.id == 'distance-learning-lessons'">

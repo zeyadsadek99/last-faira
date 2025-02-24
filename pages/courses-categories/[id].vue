@@ -2,7 +2,7 @@
   <div class="courses-categories fadeIn">
     <!-- ✅ Image Header -->
     <ImageHeader bgColor="bg-[#bdfcd7]">
-      <div class="header-container flex items-center justify-start h-full">
+      <div class="header-container container flex items-center justify-start h-full">
         <div class="container  mx-auto px-4">
           <div class="header-title">
             <h1 class="w-[30%] text-[5rem] font-bold mb-0">{{ courseDetails?.subject_name?.subject_name }}</h1>

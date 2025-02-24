@@ -166,6 +166,7 @@ export default {
       boxShadow: {
         'custom-shadow': '0 4px 50px 0px rgba(0, 0, 0, 0.6)',
       },
+      
       backgroundImage: {
         'custom-gradient': 'linear-gradient(180deg, #1E3A81 0%, #0E45D0 73.5%)',
         'custom-gradient1': 'linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.8) 100%)',
