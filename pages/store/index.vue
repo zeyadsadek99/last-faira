@@ -77,11 +77,17 @@ const currentPage = ref(1);
 const storeItems = computed(() => store.getStoreItems.setStoreItems);
 const lastPage = computed(() => store.lastPage);
 
-const toggleStoreItemModal = (item) => {
+const toggleStoreItemModal = (item = null) => {
   storeItemModalIsOpen.value = !storeItemModalIsOpen.value;
-  selectedStoreItem.value = item;
-  console.log("zoz");
+
+  if (!storeItemModalIsOpen.value) {
+    // ✅ Reset selectedItem when modal closes
+    selectedStoreItem.value = null;
+  } else {
+    selectedStoreItem.value = item;
+  }
 };
+
 
 const pagenationClick = (pageNum) => {
   currentPage.value = pageNum;

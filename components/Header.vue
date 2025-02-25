@@ -21,7 +21,7 @@ const notificationsMenuIsOpen = ref(false);
 const registeredUserType = computed(() => authStore.userType);
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 const userData = computed(() => authStore.getAuthenticatedUserData);
-const notificationsData = computed(() => notificationsStore.notificationsData);
+const notificationsData = computed(() => notificationsStore.getNotifications);
 
 // Navbar Links
 const navbarLinks = reactive([
@@ -161,7 +161,7 @@ onMounted(() => {
         </div>
 
         <!-- START:: NAVBAR BUTTONS -->
-        <div class="flex items-center justify-center gap-[10px]">
+        <div class="navbar_btns_wrapper flex items-center justify-center gap-[10px]">
           <!-- START:: LOGIN ROUTE -->
           <NuxtLink
             to="/login"
@@ -213,9 +213,8 @@ onMounted(() => {
             <button
               class="notification_btn"
               @click.stop="toggleNotificationsMenu"
-              v-if="authStore.isAuthenticated"
             >
-              <i class="fal fa-bell"></i>
+              <i class="fa-solid fa-bell"></i>
               <span
                 class="badge"
                 v-show="notificationsStore.unreadNotifications !== 0"
@@ -538,226 +537,83 @@ nav .navbar_wrapper .navbar_btns_wrapper button.notification_btn svg {
 nav .navbar_wrapper .navbar_btns_wrapper button.small_screens_navbar_toggeler {
   display: none;
 }
-nav .navbar_wrapper .navbar_btns_wrapper .user_notification_content_wrapper {
-  position: relative;
+/* ✅ User Notification Wrapper */
+.user_notification_content_wrapper {
+  @apply relative;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu {
-  position: absolute;
-  top: 130%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  min-width: 280px;
-  max-width: -moz-max-content;
-  max-width: max-content;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  background-color: var(--theme_bg_clr);
-  border-radius: 10px;
-  box-shadow: 0 0 10px 2px var(--simple_shadow_clr);
-  z-index: 2;
-  overflow: hidden;
+
+/* ✅ Notifications Menu  max-w-max*/
+.notifications_menu {
+  @apply absolute top-[130%] left-1/2 transform -translate-x-1/2 
+    m-0 p-0 list-none min-w-[280px]  flex flex-col items-center 
+    justify-center bg-themeBg rounded-lg shadow-lg z-10 overflow-hidden;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .empty_image {
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+/* ✅ Empty Notifications */
+.notifications_menu .empty_image {
+  @apply p-4 flex items-center justify-center;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item {
-  width: 100%;
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  -moz-column-gap: 8px;
-  column-gap: 8px;
-  transition: all 0.4s ease-in-out;
+
+/* ✅ Notification Item */
+.notifications_menu .notifications_menu_item {
+  @apply w-full p-3 flex items-center justify-start gap-2 
+    transition-all duration-[400ms] border-b last:border-b-0 border-veryLightTheme;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item:hover {
-  background-color: var(--soft_main_theme_clr);
+
+/* ✅ Hover Effect */
+.notifications_menu .notifications_menu_item:hover {
+  @apply bg-softMainTheme;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item:not(:last-of-type) {
-  margin-bottom: 8px;
-  border-bottom: 1px solid var(--very_light_theme_clr);
+
+/* ✅ Icon Wrapper */
+.notifications_menu .notifications_menu_item .icon_wrapper {
+  @apply w-1/5;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item
-  .icon_wrapper {
-  width: 20%;
+
+/* ✅ Notification Icon */
+.notifications_menu .notifications_menu_item .icon_wrapper .notification_icon_wrapper {
+  @apply flex items-center justify-center w-10 h-10 bg-mainTheme 
+    text-white rounded-lg;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item
-  .icon_wrapper
-  .notification_icon_wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background-color: var(--main_theme_clr);
-  border-radius: 10px;
+
+/* ✅ Notification Icon Size */
+.notifications_menu .notifications_menu_item .icon_wrapper .notification_icon_wrapper i,
+.notifications_menu .notifications_menu_item .icon_wrapper .notification_icon_wrapper svg {
+  @apply text-white text-lg;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item
-  .icon_wrapper
-  .notification_icon_wrapper
-  svg,
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item
-  .icon_wrapper
-  .notification_icon_wrapper
-  i {
-  color: var(--white_clr);
-  font-size: 18px;
+
+/* ✅ Notification Body */
+.notifications_menu .notifications_menu_item .notification_body_wrapper {
+  @apply w-3/5;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item
-  .notification_body_wrapper {
-  width: 64%;
+
+/* ✅ Notification Text */
+.notifications_menu .notifications_menu_item .notification_body_wrapper .notification_body {
+  @apply m-0 text-themeText text-lg font-medium leading-relaxed;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item
-  .notification_body_wrapper
-  .notification_body {
-  margin: 0;
-  line-height: 1.4;
-  color: var(--theme_text_clr);
-  font-size: 18px;
-  font-family: "ArbFONTS-Somar-Medium";
+
+/* ✅ Notification Date */
+.notifications_menu .notifications_menu_item .notification_body_wrapper .notification_date {
+  @apply text-lightGray text-sm font-medium m-0;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item
-  .notification_body_wrapper
-  .notification_date {
-  color: var(--light_gray_clr);
-  font-size: 16px;
-  font-family: "ArbFONTS-Somar-Medium";
-  margin: 0;
+
+/* ✅ Delete Button Wrapper */
+.notifications_menu .notifications_menu_item .delete_btn_wrapper {
+  @apply w-1/5 flex items-center justify-center;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item
-  .delete_btn_wrapper {
-  width: 15%;
+
+/* ✅ Delete Notification Button */
+.notifications_menu .notifications_menu_item .delete_btn_wrapper .delete_notification_btn {
+  @apply flex items-center justify-center w-10 h-10 bg-secondaryTheme 
+    text-midRed rounded-full transition hover:bg-red-200;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item
-  .delete_btn_wrapper
-  .delete_notification_btn {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--secondary_theme_clr);
-  color: var(--main_theme_clr);
-  border-radius: 10px;
-  border-radius: 50%;
+
+/* ✅ Delete Icon */
+.notifications_menu .notifications_menu_item .delete_btn_wrapper .delete_notification_btn i,
+.notifications_menu .notifications_menu_item .delete_btn_wrapper .delete_notification_btn svg {
+  @apply text-lg text-midRed;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item
-  .delete_btn_wrapper
-  .delete_notification_btn
-  i,
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item
-  .delete_btn_wrapper
-  .delete_notification_btn
-  svg {
-  font-size: 20px;
-}
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item
-  .delete_btn_wrapper
-  .delete_notification_btn
-  svg,
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_notification_content_wrapper
-  .notifications_menu
-  .notifications_menu_item
-  .delete_btn_wrapper
-  .delete_notification_btn
-  i {
-  color: var(--mid_red_clr);
-}
+
 nav .navbar_wrapper .navbar_btns_wrapper .user_profile_menu_wrapper {
   position: relative;
 }
@@ -784,6 +640,20 @@ nav
   -o-object-fit: cover;
   object-fit: cover;
 }
+/* ✅ Tooltip Styling */
+.navbar_btns_wrapper button .toolTip {
+  @apply absolute bottom-[-35px] left-0 right-0 
+    w-max px-2 text-lg font-medium text-themeText 
+    bg-themeBg shadow-lg rounded-lg 
+    z-10 transition-all duration-300 
+    transform scale-0 opacity-0 origin-top;
+}
+
+/* ✅ Tooltip Hover Effect */
+.navbar_btns_wrapper button:hover .toolTip {
+  @apply scale-100 opacity-100;
+}
+
 nav
   .navbar_wrapper
   .navbar_btns_wrapper

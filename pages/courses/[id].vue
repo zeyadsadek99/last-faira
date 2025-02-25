@@ -172,7 +172,7 @@ const getCoursesData = async () => {
   try {
     const response = await $axios.get(url, {
       headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDI5NTUwNCwiZXhwIjoxNzcxODMxNTA0LCJuYmYiOjE3NDAyOTU1MDQsImp0aSI6InVscE5rTVBCYnhQY0NYU1MiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.JdnZaVm7B3_gErAeelc-CBIqtLGLVtS3Ri-48r2pous`,
+        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks`,
         //   Authorization: `Bearer ${authStore.token}`,
         "Accept-Language": "ar",
         //   "Accept-Language": authStore.language,

@@ -3,7 +3,10 @@ import { useCookies } from "vue3-cookies";
 import { useI18n } from "vue-i18n";
 import { useNuxtApp } from "#app";
 
+// const { t } = useI18n();
+
 export const useStoreWishlist = defineStore("storeWishlist", {
+
   state: () => ({
     storeItems: [],
     lastPage: null,
@@ -28,9 +31,64 @@ export const useStoreWishlist = defineStore("storeWishlist", {
   },
 
   actions: {
+    // async toggleFavorite(id) {
+    //   const { cookies } = useCookies();
+    //   const { $axios } = useNuxtApp();
+
+    //   try {
+    //     const theData = new FormData();
+    //     theData.append("fav_type", "product");
+    //     theData.append("id", id);
+
+    //     const response = await $axios.post("user/favourite", theData, {
+    //       headers: {
+    //         Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDM5ODA3NywiZXhwIjoxNzcxOTM0MDc3LCJuYmYiOjE3NDAzOTgwNzcsImp0aSI6ImFNSlhHcTg4QVVINHJSWEUiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.7rURiqBXDYarUXPYrM7SPzA1mmg1YbuzBZMbDP2PaTU`,
+    //         // Authorization: `Bearer ${cookies.get("elmo3lm_elmosa3d_user_token")}`,
+    //         "Accept-language": "ar", // "Accept-language": cookies.get("elmo3lm_elmosa3d_app_lang"),
+    //         "cache-control": "no-cache",
+    //         Accept: "application/json",
+    //       },
+    //     });
+
+    //     // ✅ Update the favorite status in the state
+    //     const updatedFavStatus = response.data.data.is_fav;
+
+    //     // // ✅ Update the product list in the store
+    //     // this.favorites.products = this.favorites.products.map((product) =>
+    //     //   product.id === id ? { ...product, is_fav: updatedFavStatus } : product
+    //     // );
+
+    //     // ✅ Fetch updated products & favorites
+    //     // this.getProducts();
+    //     // this.getStudentFavorites();
+    //     return updatedFavStatus; // ✅ Return updated status
+    //   } catch (error) {
+    //     console.error("Error updating favorites:", error);
+    //   }
+    // },
+    async getCart() {
+      const { cookies } = useCookies();
+      const { $axios } = useNuxtApp();
+
+      try {
+        const response = await $axios.get("user/cart", {
+          headers: {
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks`,
+            // Authorization: `Bearer ${cookies.get("elmo3lm_elmosa3d_user_token")}`,
+            "Accept-language": "ar",
+            // "Accept-language": cookies.get("elmo3lm_elmosa3d_app_lang"),
+            "cache-control": "no-cache",
+            Accept: "application/json",
+          },
+        });
+        console.log('zoz')
+        shoppingCartItems = response.data;
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      }
+    },
     async addToCart(payload) {
       const { cookies } = useCookies();
-      const { t } = useI18n();
       const { $axios } = useNuxtApp(); // ✅ Use Nuxt's axios instance
 
       const theData = new FormData();
@@ -40,17 +98,18 @@ export const useStoreWishlist = defineStore("storeWishlist", {
       try {
         await $axios.post("user/cart", theData, {
           headers: {
-            Authorization: `Bearer ${cookies.get("elmo3lm_elmosa3d_user_token")}`,
-            "Accept-language": cookies.get("elmo3lm_elmosa3d_app_lang"),
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks`,
+            // Authorization: `Bearer ${cookies.get("elmo3lm_elmosa3d_user_token")}`,
+            "Accept-language": "ar", // "Accept-language": cookies.get("elmo3lm_elmosa3d_app_lang"),
             "cache-control": "no-cache",
             Accept: "application/json",
           },
         });
 
-        alert(t("MESSAGES.added_to_cart")); // Replace iziToast with alternative
-        this.getCart();
+        await this.getCart();
+        alert("MESSAGES.added_to_cart"); // Replace iziToast with alternative
       } catch (error) {
-        alert(error.response?.data?.message || t("VALIDATION.error")); // Handle error gracefully
+        alert(error.response?.data?.message || "VALIDATION.error"); // Handle error gracefully
       }
     },
 
@@ -62,7 +121,9 @@ export const useStoreWishlist = defineStore("storeWishlist", {
       try {
         await $axios.delete(`user/cart/${productId}`, {
           headers: {
-            Authorization: `Bearer ${cookies.get("elmo3lm_elmosa3d_user_token")}`,
+            Authorization: `Bearer ${cookies.get(
+              "elmo3lm_elmosa3d_user_token"
+            )}`,
             "Accept-language": cookies.get("elmo3lm_elmosa3d_app_lang"),
             "cache-control": "no-cache",
             Accept: "application/json",
@@ -83,8 +144,8 @@ export const useStoreWishlist = defineStore("storeWishlist", {
       try {
         const response = await $axios.get(`user/product?page=${page}`, {
           headers: {
-            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDA0MDI2NywiZXhwIjoxNzcxNTc2MjY3LCJuYmYiOjE3NDAwNDAyNjcsImp0aSI6IkpkRzl3SkJBcnBkeUx1b0ciLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.68MNuHuBFynQCc04POA1WxdSt8I74tdWLxr8hbQi2SA`,
-            "Accept-language": 'ar',
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks`,
+            "Accept-language": "ar",
             // Authorization: `Bearer ${cookies.get("elmo3lm_elmosa3d_user_token")}`,
             // "Accept-language": cookies.get("elmo3lm_elmosa3d_app_lang"),
             "cache-control": "no-cache",
@@ -99,26 +160,6 @@ export const useStoreWishlist = defineStore("storeWishlist", {
       }
     },
 
-    async getCart() {
-      const { cookies } = useCookies();
-      const { $axios } = useNuxtApp();
-
-      try {
-        const response = await $axios.get("user/cart", {
-          headers: {
-            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDA0MDI2NywiZXhwIjoxNzcxNTc2MjY3LCJuYmYiOjE3NDAwNDAyNjcsImp0aSI6IkpkRzl3SkJBcnBkeUx1b0ciLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.68MNuHuBFynQCc04POA1WxdSt8I74tdWLxr8hbQi2SA`,
-            // Authorization: `Bearer ${cookies.get("elmo3lm_elmosa3d_user_token")}`,
-            "Accept-language": 'ar',
-            // "Accept-language": cookies.get("elmo3lm_elmosa3d_app_lang"),
-            "cache-control": "no-cache",
-            Accept: "application/json",
-          },
-        });
-
-        this.shoppingCartItems = response.data;
-      } catch (error) {
-        console.error("Error fetching cart:", error);
-      }
-    },
+    
   },
 });

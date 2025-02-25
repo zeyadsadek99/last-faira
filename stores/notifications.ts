@@ -2,7 +2,9 @@ import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
 import { useRuntimeConfig } from "#imports";
 import { useI18n } from "vue-i18n";
-import axios from "axios";
+import { useNuxtApp } from "#app";
+
+// import axios from "axios";
 
 export const useNotificationsStore = defineStore("notifications", {
   state: () => ({
@@ -13,12 +15,15 @@ export const useNotificationsStore = defineStore("notifications", {
   actions: {
     async getNotifications() {
       const toast = useToast();
-      const config = useRuntimeConfig();
+      const { $axios } = useNuxtApp();
       try {
-        const { data } = await axios.get(`${config.public.apiBase}/notifications`, {
+        const { data } = await $axios.get("notifications", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("elmo3lm_elmosa3d_user_token")}`,
-            "Accept-language": localStorage.getItem("elmo3lm_elmosa3d_app_lang"),
+            // Authorization: `Bearer ${cookies.get("elmo3lm_elmosa3d_user_token")}`,
+            // "Accept-language": cookies.get("elmo3lm_elmosa3d_app_lang"),
+
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks`,
+            "Accept-language": "ar",
             "cache-control": "no-cache",
             Accept: "application/json",
           },
@@ -34,22 +39,31 @@ export const useNotificationsStore = defineStore("notifications", {
     async deleteNotification(notificationId: number) {
       const toast = useToast();
       const { t } = useI18n();
-      const config = useRuntimeConfig();
+      const { $axios } = useNuxtApp();
       try {
-        await axios.delete(`${config.public.apiBase}/notifications/${notificationId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("elmo3lm_elmosa3d_user_token")}`,
-            "Accept-language": localStorage.getItem("elmo3lm_elmosa3d_app_lang"),
-            "cache-control": "no-cache",
-            Accept: "application/json",
-          },
-        });
+        await $axios.delete(
+          `notifications/${notificationId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem(
+                "elmo3lm_elmosa3d_user_token"
+              )}`,
+              "Accept-language": localStorage.getItem(
+                "elmo3lm_elmosa3d_app_lang"
+              ),
+              "cache-control": "no-cache",
+              Accept: "application/json",
+            },
+          }
+        );
 
         toast.success(t("MESSAGES.deleted_successfully"));
         this.getNotifications();
       } catch (error) {
         const err = error as any;
-        toast.error(err.response?.data?.message || "Failed to delete notification.");
+        toast.error(
+          err.response?.data?.message || "Failed to delete notification."
+        );
       }
     },
   },

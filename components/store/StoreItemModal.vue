@@ -20,7 +20,7 @@
 
           <!-- ✅ Item Name -->
           <div class="name-wrapper">
-            <h2 class="text-[2rem] font-medium   text-themeText">
+            <h2 class="text-[2rem] font-medium text-themeText">
               {{ selectedItem.name }}
             </h2>
           </div>
@@ -35,9 +35,9 @@
             <button
               class="increment"
               @click="incrementCartQuantity"
-              :disabled="quantityInCart >= selectedItem.amount"
+              :disabled="quantityInCart == selectedItem.amount"
             >
-              +
+              <i class="fa-solid fa-plus fa-xs"></i>
             </button>
             <span class="quantity-in-cart">{{ quantityInCart }}</span>
             <button
@@ -45,7 +45,7 @@
               @click="decrementCartQuantity"
               :disabled="quantityInCart === 0"
             >
-              -
+              <i class="fa-solid fa-minus fa-xs"></i>
             </button>
           </div>
 
@@ -61,16 +61,23 @@
             </button>
 
             <button
+              v-show="!selectedItem.is_fav"
               class="add-to-wishlist-btn"
               @click="favClick(selectedItem.id)"
               aria-label="Add to wishlist"
             >
               <i
-                :class="
-                  selectedItem.is_fav
-                    ? 'fa-solid fa-heart '
-                    : 'fa-solid fa-heart '
-                "
+                class="fa-regular fa-heart fa-xl text-lightRed cursor-pointer"
+              ></i>
+            </button>
+            <button
+              v-show="selectedItem.is_fav"
+              class="add-to-wishlist-btn"
+              @click="favClick(selectedItem.id)"
+              aria-label="Add to wishlist"
+            >
+              <i
+                class="fa-solid fa-heart fa-xl text-lightRed cursor-pointer"
               ></i>
             </button>
           </div>
@@ -84,19 +91,31 @@
 import { ref } from "vue";
 import { useStoreWishlist } from "@/stores/storeModule"; // ✅ Import Pinia store
 import BaseModal from "../global/BaseModal.vue";
-
+import { useNuxtApp } from "#app";
+const { $axios } = useNuxtApp();
 const props = defineProps({
   modalApperanceData: Boolean,
   selectedItem: Object,
 });
+console.log(props.selectedItem?.is_fav);
+const selectedItemRef = toRef(props, "selectedItem"); // ✅ Ensures reactivity
 
-const emit = defineEmits(["controleModalApperance"]);
+// const isFav = ref(props.selectedItem.is_fav); // ✅ Track favorite status
+// watch(
+//   () => props.selectedItem.is_fav,
+//   (newVal) => {
+//     isFav.value = newVal;
+//   }
+// );
+const emit = defineEmits(["controleModalApperance", "getStudentFavorites"]);
 
 const store = useStoreWishlist();
 const quantityInCart = ref(0);
 
 const controleModalApperance = () => {
-  emit("controleModalApperance");
+  emit("controleModalApperance", null); // ✅ Ensure storeItem resets to null
+  // selectedItem.value = null;
+  // quantityInCart.value = 0;
 };
 
 const incrementCartQuantity = () => {
@@ -119,16 +138,40 @@ const handleAddToCart = async () => {
     });
     controleModalApperance();
     quantityInCart.value = 0;
+    // console.log('zoz')
   } catch (error) {
     console.error("Error adding to cart:", error);
   }
 };
 
 const favClick = async (id) => {
+  if (!selectedItemRef.value) {
+    console.error("❌ selectedItem is undefined!");
+    return;
+  }
   try {
-    await store.toggleFavorite(id);
+    const theData = new FormData();
+    theData.append("fav_type", "product");
+    theData.append("id", id);
+
+    const response = await $axios.post("user/favourite", theData, {
+      headers: {
+        // Authorization: `Bearer ${localStorage.getItem("elmo3lm_elmosa3d_user_token")}`,
+        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks`,
+        "Accept-language": "ar",
+        // "Accept-language": cookies.get("elmo3lm_elmosa3d_app_lang"),        "cache-control": "no-cache",
+        "cache-control": "no-cache",
+        Accept: "application/json",
+      },
+    });
+    console.log("✅ API Response:", response.data);
+
+    // ✅ Update selectedItem.is_fav dynamically
+    selectedItemRef.value.is_fav = response.data.data.is_fav;
+    store.getProducts();
+    // store.getStudentFavorites();
   } catch (error) {
-    console.error("Error adding to wishlist:", error);
+    console.error("❌ Error updating favorites:", error);
   }
 };
 </script>
@@ -151,15 +194,16 @@ const favClick = async (id) => {
 }
 
 .cart-btns-wrapper {
-  @apply flex items-center justify-between bg-gray-100 px-4 py-2 rounded-lg w-full;
+  @apply flex items-center justify-between bg-secondaryTheme px-4 py-2 rounded-lg w-full;
 }
 
 .cart-btns-wrapper button {
-  @apply text-xl font-bold text-gray-800 bg-gray-300 px-3 py-1 rounded-lg;
+  @apply flex justify-center items-center  rounded-full  size-5  transition  disabled:opacity-20;
+  border: 1px solid black;
 }
 
 .cart-btns-wrapper .quantity-in-cart {
-  @apply text-2xl font-semibold text-gray-800;
+  @apply text-2xl font-medium;
 }
 
 .add-to-cart-and-wishlist-btns-wrapper {
@@ -178,16 +222,18 @@ const favClick = async (id) => {
 }
 .add-to-cart-btn:hover {
   background-position: 0;
-  @apply text-mainTheme ;
+  @apply text-mainTheme;
 }
 .add-to-cart-btn:disabled {
-  @apply opacity-50
+  @apply opacity-50;
 }
 /* .add-to-cart-btn {
     @apply w-full bg-blue-600 text-white text-lg font-bold py-2 rounded-lg transition hover:bg-blue-700;
   } */
 
 .add-to-wishlist-btn {
-  @apply w-[15%] h-10 flex items-center justify-center bg-softRed text-mainTheme rounded-[10px] py-[25px] m-0 transition hover:bg-red-200;
+  @apply w-[15%] h-10 flex items-center justify-center bg-softRed  rounded-[10px] py-[25px] m-0 transition hover:bg-red-200;
+}
+.add-to-wishlist-btn svg {
 }
 </style>

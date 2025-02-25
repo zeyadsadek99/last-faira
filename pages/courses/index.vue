@@ -61,7 +61,7 @@ import StudentFeaturedCourses from "~/components/home/StudentFeaturedCourses.vue
       if (route.params.id !== "distance-learning-lessons") {
         response = await $axios.get("student/all-subject-name", {
           headers: {
-            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTczOTk1ODI4NiwiZXhwIjoxNzcxNDk0Mjg2LCJuYmYiOjE3Mzk5NTgyODYsImp0aSI6IkltSDl6RjY5cXpkV1NXUTciLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.IUp94EiqVzEttONrQ3JfAlSRBxT-kdho8hS153p_sNY`,
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks`,
             "Accept-language": 'ar',
           },
         });

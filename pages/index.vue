@@ -40,7 +40,7 @@ const getHomeData = async () => {
   try {
     const response = await $axios.get("student/home", {
       headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTczOTk1ODI4NiwiZXhwIjoxNzcxNDk0Mjg2LCJuYmYiOjE3Mzk5NTgyODYsImp0aSI6IkltSDl6RjY5cXpkV1NXUTciLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.IUp94EiqVzEttONrQ3JfAlSRBxT-kdho8hS153p_sNY`, // ✅ Token from Cookie
+        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks`, // ✅ Token from Cookie
         "Accept-language": appLang.value,
         "cache-control": "no-cache",
         Accept: "application/json",
