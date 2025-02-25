@@ -230,7 +230,7 @@ onMounted(() => {
               <ul class="notifications_menu" v-if="notificationsMenuIsOpen">
                 <li
                   class="empty_image"
-                  v-if="notificationsStore.notificationsList.length === 0"
+                  v-if="notificationsStore.notifications.length === 0"
                 >
                   <img
                     src="../assets/media/empty_messages/empty_notifications.png"
@@ -240,7 +240,7 @@ onMounted(() => {
                   />
                 </li>
                 <li
-                  v-for="notification in notificationsStore.notificationsList"
+                  v-for="notification in notificationsStore.notifications"
                   :key="notification.id"
                   class="notifications_menu_item"
                 >
