@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { useNuxtApp, useCookie } from "#app"; // ✅ Import Nuxt App & useCookie
 
 export const useApiStore = defineStore("apiStore", () => {
   const { $axios } = useNuxtApp(); // ✅ Use Nuxt 3 Axios Instance

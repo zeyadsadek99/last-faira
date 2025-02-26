@@ -39,15 +39,15 @@ const scrollToSection = (sectionId: string ) => {
     section.scrollIntoView({ behavior: "smooth" });
   }
 };
-onMounted(() => {
-  getHomeData();
-  if (route.hash === "#contact") {
-    setTimeout(() => {
-      scrollToSection("contact");
-    }, 1000);
-  }
-  // documentDirection.value = document.documentElement.dir;
-});
+// onMounted(() => {
+//   getHomeData();
+//   if (route.hash === "#contact") {
+//     setTimeout(() => {
+//       scrollToSection("contact");
+//     }, 1000);
+//   }
+//   // documentDirection.value = document.documentElement.dir;
+// });
 </script>
 
 <template>

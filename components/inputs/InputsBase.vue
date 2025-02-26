@@ -72,6 +72,7 @@
           @change="$emit('change')"
           @keydown.enter.prevent="$emit('enter')"
         />
+        
         <div
           v-if="type === 'select'"
           class="absolute top-6 end-4 text-primary  flex cursor-pointer items-center pointer-events-none"

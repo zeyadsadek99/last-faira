@@ -1,5 +1,5 @@
 <template>
-    <div class="slider-wrapper">
+    <div class="slider-wrapper rounded-lg container">
       <!-- ✅ START:: SKELETON LOADER (Uncomment if needed) -->
       <!-- <SliderSkeletonLoader v-if="!sliderData" /> -->
   
@@ -12,7 +12,7 @@
         :speed="2000"
         :pagination="{ clickable: true }"
         :dir="appLocale === 'ar' ? 'rtl' : 'ltr'"
-        class="relative w-full"
+        class="relative rounded-2xl container"
       >
         <!-- ✅ START:: SLIDER ITEM -->
         <swiper-slide

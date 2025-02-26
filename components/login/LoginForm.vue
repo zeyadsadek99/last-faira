@@ -41,6 +41,7 @@
               type="phone"
               id="mobile"
               name="mobile"
+              v-model="loginData.phone"
               size="60"
               :placeholder="t('PLACEHOLDERS.phone')"
               class="w-full"
@@ -53,6 +54,7 @@
             <InputsPassword
               id="password"
               name="password"
+              v-model="loginData.password"
               :placeholder="t('PLACEHOLDERS.password')"
               icon="key"
               class="w-full"
@@ -68,9 +70,10 @@
         <!-- ✅ Submit Button -->
 
         <InputsButton
+          :disabled="loading"
           type="submit"
           :name="t('BUTTONS.login')"
-          class="w-full relative  px-[12px] py-[6px] border-1 !border-mainTheme rounded-[10px] text-[22px] font-semibold text-white no-underline ease-in-out duration-700 hover:text-maintheme"
+          class="w-full relative px-[12px] py-[6px] border-1 !border-mainTheme rounded-[10px] text-[22px] font-semibold text-white no-underline ease-in-out duration-700 hover:text-maintheme"
           style="
             background: linear-gradient(
               45deg,
@@ -82,14 +85,14 @@
           "
         />
       </VeeForm>
-      <Teleport to="body">
+      <!-- <Teleport to="body">
         <global-success
           v-if="success"
           @close="success = false"
           :message="message"
         />
         <global-fail v-if="fail" @close="fail = false" :message="message" />
-      </Teleport>
+      </Teleport> -->
 
       <!-- ✅ Register Route -->
       <p class="register-route">
@@ -107,12 +110,16 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useApiStore } from "@/stores/apiStores";
-import InputsPassword from "../inputs/InputsPassword.vue";
+import * as yup from "yup";
+import { useCookies } from "vue3-cookies";
+import { useToast } from "vue-toastification"; // ✅ Using Vue Toastification
+import { useAuthenticationStore } from "~/stores/authentication"; //  
+
 
 const { t } = useI18n();
+
 const apiStore = useApiStore();
 
 const isLoading = ref(false);
@@ -121,93 +128,70 @@ const isCountryMenuOpen = ref(false);
 const loginData = ref({ phone: "", password: "" });
 
 const countries = computed(() => apiStore.countries);
+
 const selectedCountry = computed(() => apiStore.selectedCountryKey);
 
 onMounted(async () => {
   await apiStore.getCountries();
 });
 
-const togglePasswordVisibility = () => {
-  isPasswordVisible.value = !isPasswordVisible.value;
-};
 
-const toggleCountryMenu = () => {
-  isCountryMenuOpen.value = !isCountryMenuOpen.value;
-};
 
-const validateLoginForm = async () => {
-  if (!loginData.value.phone) {
-    alert(t("VALIDATION.phone_number"));
-    return;
-  } else if (!loginData.value.password) {
-    alert(t("VALIDATION.password"));
-    return;
-  } else if (loginData.value.password.length < 6) {
-    alert(t("VALIDATION.password_length"));
-    return;
-  }
+// const validateLoginForm = async () => {
+//   if (!loginData.value.phone) {
+//     alert(t("VALIDATION.phone_number"));
+//     return;
+//   } else if (!loginData.value.password) {
+//     alert(t("VALIDATION.password"));
+//     return;
+//   } else if (loginData.value.password.length < 6) {
+//     alert(t("VALIDATION.password_length"));
+//     return;
+//   }
 
-  await submitLoginForm();
-};
+//   await submitLoginForm();
+// };
 
-// import { useCookies } from "vue3-cookies";
-import { useNuxtApp } from "#app";
-import { useToast } from "vue-toastification"; // ✅ Using Vue Toastification
-import { useAuthenticationStore } from "~/stores/authentication"; // ✅ Pinia store for authentication
+const success = ref(false);
+const fail = ref(false);
+const loading = ref(false);
+const message = ref("");
+const isWaitingRequest = ref(false);
+const countryKeysMenuIsOpen = ref(false);
 
 const { cookies } = useCookies();
+
 const { $axios } = useNuxtApp();
+
 const toast = useToast(); // ✅ Initialize Toast
 const authStore = useAuthenticationStore();
 const schema = yup.object({
-  name: yup
-    .string()
-    .required(t("ERRORS.isRequired", { name: t("LABELS.name") })),
-  email: yup
-    .string()
-    .email(t("ERRORS.validEmail"))
-    .required(t("ERRORS.isRequired", { name: t("LABELS.Email") }))
-    .test("email", t("ERRORS.validEmail"), (value) => {
-      return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+(?:\.[a-z])*$/.test(
-        value
-      );
-    }),
   mobile: yup
     .string()
     .required(t("ERRORS.isRequired", { name: t("LABELS.Phone") }))
     .matches(/^[0-9]{10}$/, t("ERRORS.invalidPhone")),
-  country: yup
+  password: yup
     .string()
-    .required(t("ERRORS.isRequired", { name: t("LABELS.COUNTRY") }))
-    .oneOf(["sa", "eg", "ae"], t("ERRORS.invalidCountry")),
-
-  message: yup
-    .string()
-    .required(t("ERRORS.isRequired", { name: t("LABELS.Message") })),
+    .min(6, t("ERRORS.password_length"))
+    .required(t("ERRORS.isRequired", { name: t("LABELS.password") })),
 });
 const submitLoginForm = async () => {
+  console.log("zoz");
   isWaitingRequest.value = true;
 
   const theData = new FormData();
   // ✅ Append Static Data
   theData.append("type", "ios");
   theData.append("device_token", "static_device_token");
-
+  console.log(selectedCountry)
   // ✅ Append User Login Data
-  theData.append("country_id", countriesData.value.selectedCountry.id);
+  theData.append("country_id", selectedCountry.value.id);
   theData.append("identifier", loginData.value.phone.replace(/^[0.]+/, ""));
   theData.append("password", loginData.value.password);
 
   try {
     // ✅ Send Login Request
-    const res = await $axios.post("login", theData, {
-      headers: {
-        Authorization: `Bearer ${cookies.get("elmo3lm_elmosa3d_user_token") || ""}`,
-        "Accept-language": cookies.get("elmo3lm_elmosa3d_app_lang") || "ar",
-        "cache-control": "no-cache",
-        Accept: "application/json",
-      },
-    });
+    const res = await $axios.post("login", theData, {});
 
     isWaitingRequest.value = false;
 
@@ -233,13 +217,28 @@ const submitLoginForm = async () => {
     });
 
     cookies.set("elmo3lm_elmosa3d_user_id", res.data.data.id);
-    cookies.set("elmo3lm_elmosa3d_user_token", res.data.data.token.access_token, { path: "/", secure: true });
-    cookies.set("elmo3lm_elmosa3d_user_type", res.data.data.user_type, { path: "/", secure: true });
+    cookies.set(
+      "elmo3lm_elmosa3d_user_token",
+      res.data.data.token.access_token,
+      { path: "/", secure: true }
+    );
+    cookies.set("elmo3lm_elmosa3d_user_type", res.data.data.user_type, {
+      path: "/",
+      secure: true,
+    });
 
     // ✅ Store Additional Data for Students
     if (res.data.data?.user_type === "student") {
-      cookies.set("elmo3lm_elmosa3d_student_parent_phone", res.data.data?.child_parent?.parent?.phone, { path: "/" });
-      cookies.set("elmo3lm_elmosa3d_student_parent_key", JSON.stringify(res.data.data?.child_parent?.parent?.country), { path: "/" });
+      cookies.set(
+        "elmo3lm_elmosa3d_student_parent_phone",
+        res.data.data?.child_parent?.parent?.phone,
+        { path: "/" }
+      );
+      cookies.set(
+        "elmo3lm_elmosa3d_student_parent_key",
+        JSON.stringify(res.data.data?.child_parent?.parent?.country),
+        { path: "/" }
+      );
     }
 
     clearLoginFormData();
@@ -265,7 +264,30 @@ const submitLoginForm = async () => {
     });
   }
 };
+const toggleCountryKeysMenu = () => {
+  countryKeysMenuIsOpen.value = !countryKeysMenuIsOpen;
+};
+// const togglePasswordVisibility = () => {
+//   isPasswordVisible.value = !isPasswordVisible.value;
+// };
 
+const toggleCountryMenu = () => {
+  isCountryMenuOpen.value = !isCountryMenuOpen.value;
+};
+
+// ✅ Toggle Password Visibility
+const togglePasswordVisibility = (event) => {
+  const passwordElement = event.currentTarget.parentElement.children[0];
+  const passwordTogglerBtn = event.currentTarget;
+
+  if (passwordElement.type === "password") {
+    passwordElement.type = "text";
+    passwordTogglerBtn.classList.add("password_is_visible");
+  } else {
+    passwordElement.type = "password";
+    passwordTogglerBtn.classList.remove("password_is_visible");
+  }
+};
 </script>
 
 <style scoped>

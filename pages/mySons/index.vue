@@ -58,7 +58,7 @@ onMounted(() => {
           <NuxtLink
             v-for="son in userData"
             :key="son.id"
-            :to="`/son-courses/${son.child_data.id}`"
+            :to="`/mySons/${son.child_data.id}`"
             class="son-card-wrapper p-4 bg-themeBg rounded-lg shadow-md transition hover:scale-105"
           >
             <!-- ✅ Image -->

@@ -94,6 +94,18 @@ export default {
         console.error("Failed to copy password: ", error);
       }
     },
+     togglePasswordVisibility (event) {
+  const passwordElement = event.currentTarget.parentElement.children[0];
+  const passwordTogglerBtn = event.currentTarget;
+
+  if (passwordElement.type === "password") {
+    passwordElement.type = "text";
+    passwordTogglerBtn.classList.add("password_is_visible");
+  } else {
+    passwordElement.type = "password";
+    passwordTogglerBtn.classList.remove("password_is_visible");
+  }
+},
   },
 
   computed: {

@@ -1,11 +1,15 @@
 <script lang="ts" setup>
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@fortawesome/fontawesome-free/js/all.min.js";
+import { useApiStore } from "@/stores/apiStores";
 
+const apiStore = useApiStore();
 const axios = useNuxtApp().$axios;
 const { locale, t } = useI18n();
 const i18n: any = useI18n();
-const userType = ref(process.client ? localStorage.getItem("elmo3lm_elmosa3d_user_type") : null);
+const userType = ref(
+  process.client ? localStorage.getItem("elmo3lm_elmosa3d_user_type") : null
+);
 const route = useRoute();
 const isLoading = ref(false);
 const homeData = ref(null);
@@ -33,7 +37,7 @@ const {
 
   refresh,
 } = await useLazyAsyncData("home", () => getHomeData());
-const scrollToSection = (sectionId: string ) => {
+const scrollToSection = (sectionId: string) => {
   const section = document.getElementById(sectionId);
   if (section) {
     section.scrollIntoView({ behavior: "smooth" });
@@ -41,6 +45,7 @@ const scrollToSection = (sectionId: string ) => {
 };
 onMounted(() => {
   getHomeData();
+  apiStore.getCountries();
   if (route.hash === "#contact") {
     setTimeout(() => {
       scrollToSection("contact");
@@ -144,12 +149,9 @@ onMounted(() => {
         <!-- <GlobalTopButton /> -->
         <!-- :settings="settings" -->
         <Footer />
-       
       </div>
     </Body>
   </Html>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

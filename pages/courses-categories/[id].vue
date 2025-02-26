@@ -106,13 +106,6 @@ import { useAuthenticationStore } from "@/stores/authentication";
 import { useNuxtApp } from "#app";
 import image1 from "/assets/media/empty_messages/empty_courses.png"
 
-// ✅ Import Components
-//   import ImageHeader from "@/components/ui/ImageHeader.vue";
-//   import Tabs from "@/components/ui/Tabs.vue";
-//   import CourseCard from "@/components/ui/CourseCard.vue";
-//   import MainLoader from "@/components/ui/loaders/MainLoader.vue";
-//   import EmptyCoursesMessage from "@/components/ui/emptyMessages/EmptyCoursesMessage.vue";
-//   import GlobalPagination from "@/components/ui/GlobalPagination.vue";
 
 // ✅ Setup
 const { $axios } = useNuxtApp();

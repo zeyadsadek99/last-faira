@@ -1,15 +1,16 @@
 import { defineStore } from "pinia";
 import { useRouter } from "vue-router";
 import { useCookies } from "vue3-cookies";
+
 import { useNuxtApp } from "#app";
+const { cookies } = useCookies();
 
 export const useAuthenticationStore = defineStore("authentication", {
   state: () => ({
-    userType: "student" as string, // ✅ Default to "guest"
-    userToken: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks" as string,     // ✅ Default to empty string
-    userAvatar: "https://egypt-api.faiera.com/dashboardAssets/images/backgrounds/avatar.jpg" as string, // ✅ Default avatar
+    userType: cookies.get("elmo3lm_elmosa3d_user_type"),
+    userToken: `Bearer ${cookies.get("elmo3lm_elmosa3d_user_token")}`,
+    userAvatar: cookies.get("elmo3lm_elmosa3d_user_avatar"),
   }),
-  
 
   getters: {
     getAuthenticatedUserData(state) {
@@ -28,9 +29,9 @@ export const useAuthenticationStore = defineStore("authentication", {
     initializeAuth() {
       const { cookies } = useCookies();
 
-      this.userType = cookies.get("elmo3lm_elmosa3d_user_type") ;
-      this.userToken = cookies.get("elmo3lm_elmosa3d_user_token") ;
-      this.userAvatar = cookies.get("elmo3lm_elmosa3d_user_avatar") ;
+      this.userType = cookies.get("elmo3lm_elmosa3d_user_type");
+      this.userToken = cookies.get("elmo3lm_elmosa3d_user_token");
+      this.userAvatar = cookies.get("elmo3lm_elmosa3d_user_avatar");
     },
 
     setAuthenticatedUserData(payload: {
@@ -71,9 +72,9 @@ export const useAuthenticationStore = defineStore("authentication", {
       cookies.remove("elmo3lm_elmosa3d_user_token");
       cookies.remove("elmo3lm_elmosa3d_user_avatar");
 
-      this.userType = '';
-      this.userToken = '';
-      this.userAvatar = '';
+      this.userType = "";
+      this.userToken = "";
+      this.userAvatar = "";
 
       // Refresh to clear store state & redirect
       location.reload();

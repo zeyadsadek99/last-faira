@@ -83,6 +83,21 @@ const toggleNotificationsMenu = () => {
   profileMenuIsOpen.value = false;
   notificationsStore.getNotifications();
 };
+// ✅ Function to close menus when clicking outside
+const closeMenus = () => {
+  profileMenuIsOpen.value = false;
+  notificationsMenuIsOpen.value = false;
+};
+
+// ✅ Add event listener when component mounts
+onMounted(() => {
+  window.addEventListener("click", closeMenus);
+});
+
+// ✅ Remove event listener when component unmounts
+onUnmounted(() => {
+  window.removeEventListener("click", closeMenus);
+});
 
 const logout = async () => {
   await authStore.logout();
@@ -115,7 +130,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <nav id="navbar" class="relative py-6 bg-themeBg">
+  <nav id="navbar" class="relative container py-6 bg-themeBg">
     <!-- START:: SEARCH -->
     <Search v-if="searchIsOpen" @closeSearch="toggleSearch" />
     <!-- END:: SEARCH -->
@@ -138,18 +153,14 @@ onMounted(() => {
           <ul
             class="hidden md:flex md:items-center md:justify-between m-0 p-0 gap-12 list-none"
           >
-            <li
-              v-for="link in navbarLinks"
-              :key="link.id"
-              class="navbar_link"
-            >
+            <li v-for="link in navbarLinks" :key="link.id" class="navbar_link">
               <!-- {{ link.user_type == 'all' }} -->
 
               <NuxtLink
-              v-if="
-                link?.user_type === registeredUserType ||
-                link?.user_type === 'all'
-              "
+                v-if="
+                  link?.user_type === registeredUserType ||
+                  link?.user_type === 'all'
+                "
                 class="text-[22px] font-semibold text-themeText transition-all duration-100 ease-in-out hover:text-mainTheme"
                 :to="link.url"
               >
@@ -161,12 +172,14 @@ onMounted(() => {
         </div>
 
         <!-- START:: NAVBAR BUTTONS -->
-        <div class="navbar_btns_wrapper flex items-center justify-center gap-[10px]">
+        <div
+          class="navbar_btns_wrapper flex items-center justify-center gap-[10px]"
+        >
           <!-- START:: LOGIN ROUTE -->
           <NuxtLink
+            v-if="!authStore.getAuthenticatedUserData.token"
             to="/login"
-            class="relative text-[22px] font-arb font-semibold text-mainTheme px-[10px] py-[4px] no-underline"
-            v-if="!authStore.isAuthenticated"
+            class="relative text-[22px] font-semibold text-mainTheme px-[10px] py-2 no-underline"
           >
             {{ t("NAVBAR.login") }}
           </NuxtLink>
@@ -175,7 +188,7 @@ onMounted(() => {
           <!-- START:: REGISTER ROUTE -->
           <NuxtLink
             to="/login/selectRegisterType"
-            class="relative px-[12px] py-[6px] border-1 !border-mainTheme  rounded-[10px] text-[22px] font-arb font-semibold text-mainTheme no-underline  ease-in-out duration-700 hover:text-white"
+            class="relative px-[10px] py-2 border-1 !border-mainTheme rounded-[10px] text-[22px] font-semibold text-mainTheme no-underline ease-in-out duration-700 hover:text-white"
             style="
               background: linear-gradient(45deg, #34bf6c 50%, transparent 50%);
               background-size: 400%;
@@ -188,7 +201,7 @@ onMounted(() => {
             @mouseleave="
               (e) => (e.currentTarget.style.backgroundPosition = '100%')
             "
-            v-if="!authStore.isAuthenticated"
+            v-if="!authStore.getAuthenticatedUserData.token"
           >
             {{ t("NAVBAR.register") }}
           </NuxtLink>
@@ -198,11 +211,11 @@ onMounted(() => {
           <!-- START:: ADD SUBJECT ROUTE -->
           <NuxtLink
             to="/add-subject"
-            class="flex items-center justify-center gap-[4px] relative px-[12px] py-[6px] bg-gradient-to-r from-mainTheme via-transparent to-transparent bg-[400%] border border-mainTheme transition-all duration-[600ms] ease-in-out rounded-[10px] text-[22px] font-arb font-semibold text-themeText no-underline hover:bg-left hover:text-white"
-            v-if="authStore.isTeacher"
+            class="add_subject_route"
+           
           >
             <span class="flex items-center justify-center">
-              <i class="fal fa-plus"></i>
+              <i class="fa-solid fa-plus"></i>
             </span>
             {{ t("NAVBAR.add_subject") }}
           </NuxtLink>
@@ -213,8 +226,10 @@ onMounted(() => {
             <button
               class="notification_btn"
               @click.stop="toggleNotificationsMenu"
+              v-if="userData.token"
             >
-              <i class="fa-solid fa-bell"></i>
+              <i class="fa-regular fa-bell"></i>
+
               <span
                 class="badge"
                 v-show="notificationsStore.unreadNotifications !== 0"
@@ -226,11 +241,11 @@ onMounted(() => {
               </span>
             </button>
 
-            <transition name="fadeInUp">
+            <transition name="fadeInUp" mode="out-in">
               <ul class="notifications_menu" v-if="notificationsMenuIsOpen">
                 <li
                   class="empty_image"
-                  v-if="notificationsStore.notifications.length === 0"
+                  v-if="notificationsStore.notifications.length == 0"
                 >
                   <img
                     src="../assets/media/empty_messages/empty_notifications.png"
@@ -246,7 +261,7 @@ onMounted(() => {
                 >
                   <div class="icon_wrapper">
                     <span class="notification_icon_wrapper">
-                      <i class="fal fa-bell"></i>
+                      <i class="fa-solid fa-bell"></i>
                     </span>
                   </div>
                   <div class="notification_body_wrapper">
@@ -258,9 +273,11 @@ onMounted(() => {
                   <div class="delete_btn_wrapper">
                     <button
                       class="delete_notification_btn"
-                      @click.stop="deleteNotification(notification.id)"
+                      @click.stop="
+                        notificationsStore.deleteNotification(notification.id)
+                      "
                     >
-                      <i class="fal fa-trash-alt"></i>
+                      <i class="fa-solid fa-trash"></i>
                     </button>
                   </div>
                 </li>
@@ -269,10 +286,51 @@ onMounted(() => {
           </div>
           <!-- END:: NOTIFICATION BUTTON -->
 
+          <!-- START:: CHATS ROUTE -->
+          <NuxtLink v-if="isAuthenticated" to="/chats" class="chats_route">
+            <i class="fa-regular fa-comment"></i>
+            <span class="toolTip">{{ t("TOOLTIPS.chats") }}</span>
+          </NuxtLink>
+          <!-- END:: CHATS ROUTE -->
+          <!-- ✅ STRENGTHENING REQUESTS ROUTE -->
+          <NuxtLink
+            v-if="isAuthenticated && ['parent', 'teacher'].includes(userType)"
+            to="/strengthening-requests"
+            class="strengthening_requests"
+          >
+            <i class="fa-solid fa-book"></i>
+            <!-- <i class="fa-regular fa-book"></i> -->
+            <span class="toolTip">{{
+              t("TOOLTIPS.strengthening_requests")
+            }}</span>
+          </NuxtLink>
+
+          <!-- ✅ MY COURSES ROUTE -->
+          <NuxtLink
+            to="/my-courses"
+            class="my_courses_route"
+          >
+          <!-- <svg width="79px" height="79px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracurrentColorerCarrier" stroke-linecurrentcap="round" stroke-linejoin="round"></g><g id="SVGRepo_icurrentColoronCarrier"> <path d="M4 19V6.2C4 5.0799 4 4.51984 4.21799 4.09202C4.40973 3.71569 4.71569 3.40973 5.09202 3.21799C5.51984 3 6.0799 3 7.2 3H16.8C17.9201 3 18.4802 3 18.908 3.21799C19.2843 3.40973 19.5903 3.71569 19.782 4.09202C20 4.51984 20 5.0799 20 6.2V17H6C4.89543 17 4 17.8954 4 19ZM4 19C4 20.1046 4.89543 21 6 21H20M9 7H15M9 11H15M19 17V21" stroke="currentColor" stroke-width="2" stroke-linecurrentcap="round" stroke-linejoin="round"></path> </g></svg> -->
+            <i class="fa-solid fa-book"></i>
+            <span class="toolTip">{{ t("TOOLTIPS.my_courses") }}</span>
+          </NuxtLink>
+
+          <!-- ✅ CART ROUTE -->
+          <NuxtLink
+            v-if="isAuthenticated && userType === 'student'"
+            to="/shopping-cart"
+            class="shopping_cart_btn relative"
+          >
+            <i class="fa-solid fa-shopping-cart"></i>
+            <span v-if="cartItemCount > 0" class="badge">{{
+              cartItemCount
+            }}</span>
+            <span class="toolTip">{{ t("TOOLTIPS.shopping_cart") }}</span>
+          </NuxtLink>
           <!-- START:: USER PROFILE BUTTON -->
           <div
-            class="user_profile_menu_wrapper"
-            v-if="authStore.isAuthenticated"
+            class="relative user_profile_menu_wrapper"
+            v-if="authStore.getAuthenticatedUserData.token"
           >
             <button
               class="user_profile_menu_btn"
@@ -283,27 +341,59 @@ onMounted(() => {
               </div>
             </button>
 
-            <transition name="fadeInUp">
-              <ul class="user_profile_menu" v-if="profileMenuIsOpen">
+            <transition name="fadeInUp" mode="out-in">
+              <ul v-if="profileMenuIsOpen" class="user_profile_menu">
                 <li
                   class="user_profile_menu_item"
                   @click.stop="toggleProfileMenu"
                 >
-                  <NuxtLink to="/user-account">{{
-                    t("NAVBAR.my_account")
-                  }}</NuxtLink>
+                  <NuxtLink to="/user-account">
+                    {{ t("NAVBAR.my_account") }}
+                  </NuxtLink>
                 </li>
+
                 <li
+                  v-if="userType === 'teacher'"
                   class="user_profile_menu_item"
-                  v-if="authStore.isTeacher"
                   @click.stop="toggleProfileMenu"
                 >
-                  <NuxtLink to="/my-courses">{{
-                    t("NAVBAR.my_tutorials")
-                  }}</NuxtLink>
+                  <NuxtLink to="/my-courses">
+                    {{ t("NAVBAR.my_tutorials") }}
+                  </NuxtLink>
                 </li>
+
+                <li
+                  v-if="userType === 'teacher'"
+                  class="user_profile_menu_item"
+                  @click.stop="toggleProfileMenu"
+                >
+                  <NuxtLink to="/my-balance">
+                    {{ t("NAVBAR.my_cash") }}
+                  </NuxtLink>
+                </li>
+
+                <li
+                  v-if="userType === 'student' || userType === 'teacher'"
+                  class="user_profile_menu_item"
+                  @click.stop="toggleProfileMenu"
+                >
+                  <NuxtLink to="/favorites">
+                    {{ t("NAVBAR.favorites") }}
+                  </NuxtLink>
+                </li>
+
+                <li
+                  v-if="userType === 'student'"
+                  class="user_profile_menu_item"
+                  @click.stop="toggleProfileMenu"
+                >
+                  <NuxtLink to="/my-orders">
+                    {{ t("NAVBAR.my_orders") }}
+                  </NuxtLink>
+                </li>
+
                 <li class="user_profile_menu_item">
-                  <button @click="logout">
+                  <button @click="authStore.logout()">
                     {{ t("BUTTONS.logout") }}
                   </button>
                 </li>
@@ -380,163 +470,83 @@ nav .navbar_wrapper .navbar_btns_wrapper a {
   color: var(--theme_text_clr);
   padding: 4px 10px;
 } */
-nav .navbar_wrapper .navbar_btns_wrapper a .badge {
-  padding: 0;
-  position: absolute;
-  top: -8px;
-  right: 2px;
-  display: block;
-  min-width: 17px;
-  height: 17px;
-  font-size: 12px;
-  color: var(--white_clr);
-  background-color: var(--main_theme_clr);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-nav .navbar_wrapper .navbar_btns_wrapper a .toolTip {
-  position: absolute;
-  bottom: -35px;
-  left: 0;
-  right: 0;
-  width: -moz-max-content;
-  width: max-content;
-  padding: 0 8px;
-  font-size: 18px;
-  font-family: "ArbFONTS-Somar-Medium";
-  background-color: var(--theme_bg_clr);
-  color: var(--theme_text_clr);
-  box-shadow: 0 0 10px 2px var(--simple_shadow_clr);
-  border-radius: 8px;
-  z-index: 10;
-  transition: all 0.3s ease-in-out;
-  transform-origin: top;
-  transform: scale(0);
-  opacity: 0;
-}
-nav .navbar_wrapper .navbar_btns_wrapper a:hover .toolTip {
-  transform: scale(1);
-  opacity: 1;
+
+/* ✅ Badge Styling */
+.navbar_btns_wrapper a .badge,
+.navbar_btns_wrapper button .badge {
+  @apply absolute top-[-8px] right-[2px] flex items-center justify-center 
+    min-w-[17px] h-[17px] text-[12px] rounded-[50%] 
+    text-white bg-mainTheme;
 }
 
-nav .navbar_wrapper .navbar_btns_wrapper a.add_subject_route {
-  padding: 6px 12px;
-  color: var(--main_theme_clr);
+/* ✅ Add Subject Route Button */
+.navbar_btns_wrapper a.add_subject_route {
+  @apply flex items-center justify-center text-[22px] font-semibold px-[10px] py-1 gap-1 rounded-[10px] 
+    text-mainTheme border border-mainTheme transition-all ease-in-out duration-[600ms];
   background-image: linear-gradient(
     45deg,
     var(--main_theme_clr) 50%,
     transparent 50%
   );
+
   background-position: 100%;
   background-size: 400%;
-  border: 1px solid var(--main_theme_clr);
-  transition: all 0.6s ease-in-out;
-  border-radius: 10px;
-  padding: 4px 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  -moz-column-gap: 4px;
-  column-gap: 4px;
 }
-nav .navbar_wrapper .navbar_btns_wrapper a.add_subject_route:hover {
-  background-position: 0;
-  color: var(--white_clr);
+.navbar_btns_wrapper a.add_subject_route:hover {
+  @apply bg-[0px] text-white;
 }
-nav .navbar_wrapper .navbar_btns_wrapper a.add_subject_route span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+/* ✅ Icon Wrapper for Add Subject Route */
+.navbar_btns_wrapper a.add_subject_route span {
+  @apply flex items-center justify-center;
 }
-nav .navbar_wrapper .navbar_btns_wrapper a.chats_route,
-nav .navbar_wrapper .navbar_btns_wrapper a.strengthening_requests,
-nav .navbar_wrapper .navbar_btns_wrapper a.shopping_cart_btn,
-nav .navbar_wrapper .navbar_btns_wrapper a.my_courses_route {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--soft_main_theme_clr);
-  color: var(--main_theme_clr);
-  border-radius: 10px;
+.navbar_btns_wrapper a {
+  @apply relative text-[22px] font-semibold text-themeText no-underline px-[10px] py-1;
 }
-nav .navbar_wrapper .navbar_btns_wrapper a.chats_route i,
-nav .navbar_wrapper .navbar_btns_wrapper a.chats_route svg,
-nav .navbar_wrapper .navbar_btns_wrapper a.strengthening_requests i,
-nav .navbar_wrapper .navbar_btns_wrapper a.strengthening_requests svg,
-nav .navbar_wrapper .navbar_btns_wrapper a.shopping_cart_btn i,
-nav .navbar_wrapper .navbar_btns_wrapper a.shopping_cart_btn svg,
-nav .navbar_wrapper .navbar_btns_wrapper a.my_courses_route i,
-nav .navbar_wrapper .navbar_btns_wrapper a.my_courses_route svg {
-  font-size: 20px;
+/* ✅ Chat, Strengthening Requests, Shopping Cart, My Courses Buttons */
+.navbar_btns_wrapper a.chats_route,
+.navbar_btns_wrapper a.strengthening_requests,
+.navbar_btns_wrapper a.shopping_cart_btn,
+.navbar_btns_wrapper a.my_courses_route {
+  @apply relative size-10 flex items-center justify-center 
+    bg-softMainTheme text-mainTheme rounded-lg;
 }
-nav .navbar_wrapper .navbar_btns_wrapper button .badge {
-  padding: 0;
-  position: absolute;
-  top: -8px;
-  right: 2px;
-  display: block;
-  min-width: 17px;
-  height: 17px;
-  font-size: 12px;
-  color: var(--white_clr);
-  background-color: var(--main_theme_clr);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+/* ✅ Icons inside Buttons */
+.navbar_btns_wrapper a.chats_route i,
+.navbar_btns_wrapper a.chats_route svg,
+.navbar_btns_wrapper a.strengthening_requests i,
+.navbar_btns_wrapper a.strengthening_requests svg,
+.navbar_btns_wrapper a.shopping_cart_btn i,
+.navbar_btns_wrapper a.shopping_cart_btn svg,
+.navbar_btns_wrapper a.my_courses_route i,
+.navbar_btns_wrapper a.my_courses_route svg {
+  @apply text-[20px];
 }
-nav .navbar_wrapper .navbar_btns_wrapper button .toolTip {
-  position: absolute;
-  bottom: -35px;
-  left: 0;
-  right: 0;
-  width: -moz-max-content;
-  width: max-content;
-  padding: 0 8px;
-  font-size: 18px;
-  font-family: "ArbFONTS-Somar-Medium";
-  background-color: var(--theme_bg_clr);
-  color: var(--theme_text_clr);
-  box-shadow: 0 0 10px 2px var(--simple_shadow_clr);
-  border-radius: 8px;
-  z-index: 10;
-  transition: all 0.3s ease-in-out;
-  transform-origin: top;
-  transform: scale(0);
-  opacity: 0;
+
+/* ✅ Buttons: Search, Theme Changer, Notification */
+.navbar_btns_wrapper button.search_btn,
+.navbar_btns_wrapper button.theme_changer,
+.navbar_btns_wrapper button.notification_btn {
+  @apply relative w-10 h-10 flex items-center justify-center 
+    bg-softMainTheme text-mainTheme rounded-lg;
 }
-nav .navbar_wrapper .navbar_btns_wrapper button:hover .toolTip {
-  transform: scale(1);
-  opacity: 1;
+
+/* ✅ Icons inside Buttons */
+.navbar_btns_wrapper button.search_btn i,
+.navbar_btns_wrapper button.search_btn svg,
+.navbar_btns_wrapper button.theme_changer i,
+.navbar_btns_wrapper button.theme_changer svg,
+.navbar_btns_wrapper button.notification_btn i,
+.navbar_btns_wrapper button.notification_btn svg {
+  @apply text-[20px];
 }
-nav .navbar_wrapper .navbar_btns_wrapper button.search_btn,
-nav .navbar_wrapper .navbar_btns_wrapper button.theme_changer,
-nav .navbar_wrapper .navbar_btns_wrapper button.notification_btn {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--soft_main_theme_clr);
-  color: var(--main_theme_clr);
-  border-radius: 10px;
+
+/* ✅ Hide Small Screens Navbar Toggle Button */
+.navbar_btns_wrapper button.small_screens_navbar_toggeler {
+  @apply hidden;
 }
-nav .navbar_wrapper .navbar_btns_wrapper button.search_btn i,
-nav .navbar_wrapper .navbar_btns_wrapper button.search_btn svg,
-nav .navbar_wrapper .navbar_btns_wrapper button.theme_changer i,
-nav .navbar_wrapper .navbar_btns_wrapper button.theme_changer svg,
-nav .navbar_wrapper .navbar_btns_wrapper button.notification_btn i,
-nav .navbar_wrapper .navbar_btns_wrapper button.notification_btn svg {
-  font-size: 20px;
-}
-nav .navbar_wrapper .navbar_btns_wrapper button.small_screens_navbar_toggeler {
-  display: none;
-}
+
 /* ✅ User Notification Wrapper */
 .user_notification_content_wrapper {
   @apply relative;
@@ -545,8 +555,8 @@ nav .navbar_wrapper .navbar_btns_wrapper button.small_screens_navbar_toggeler {
 /* ✅ Notifications Menu  max-w-max*/
 .notifications_menu {
   @apply absolute top-[130%] left-1/2 transform -translate-x-1/2 
-    m-0 p-0 list-none min-w-[280px]  flex flex-col items-center 
-    justify-center bg-themeBg rounded-lg shadow-lg z-10 overflow-hidden;
+    m-0 p-0 list-none min-w-[280px] w-fit  flex flex-col items-center 
+    justify-center bg-themeBg rounded-[10px] shadow-[0_0_10px_2px_var(--simple_shadow_clr)] z-10 overflow-hidden;
 }
 
 /* ✅ Empty Notifications */
@@ -557,7 +567,7 @@ nav .navbar_wrapper .navbar_btns_wrapper button.small_screens_navbar_toggeler {
 /* ✅ Notification Item */
 .notifications_menu .notifications_menu_item {
   @apply w-full p-3 flex items-center justify-start gap-2 
-    transition-all duration-[400ms] border-b last:border-b-0 border-veryLightTheme;
+    transition-all duration-[400ms] border-b last:border-b-0 last:mb-2 border-veryLightTheme;
 }
 
 /* ✅ Hover Effect */
@@ -571,14 +581,25 @@ nav .navbar_wrapper .navbar_btns_wrapper button.small_screens_navbar_toggeler {
 }
 
 /* ✅ Notification Icon */
-.notifications_menu .notifications_menu_item .icon_wrapper .notification_icon_wrapper {
+.notifications_menu
+  .notifications_menu_item
+  .icon_wrapper
+  .notification_icon_wrapper {
   @apply flex items-center justify-center w-10 h-10 bg-mainTheme 
     text-white rounded-lg;
 }
 
 /* ✅ Notification Icon Size */
-.notifications_menu .notifications_menu_item .icon_wrapper .notification_icon_wrapper i,
-.notifications_menu .notifications_menu_item .icon_wrapper .notification_icon_wrapper svg {
+.notifications_menu
+  .notifications_menu_item
+  .icon_wrapper
+  .notification_icon_wrapper
+  i,
+.notifications_menu
+  .notifications_menu_item
+  .icon_wrapper
+  .notification_icon_wrapper
+  svg {
   @apply text-white text-lg;
 }
 
@@ -588,12 +609,18 @@ nav .navbar_wrapper .navbar_btns_wrapper button.small_screens_navbar_toggeler {
 }
 
 /* ✅ Notification Text */
-.notifications_menu .notifications_menu_item .notification_body_wrapper .notification_body {
+.notifications_menu
+  .notifications_menu_item
+  .notification_body_wrapper
+  .notification_body {
   @apply m-0 text-themeText text-lg font-medium leading-relaxed;
 }
 
 /* ✅ Notification Date */
-.notifications_menu .notifications_menu_item .notification_body_wrapper .notification_date {
+.notifications_menu
+  .notifications_menu_item
+  .notification_body_wrapper
+  .notification_date {
   @apply text-lightGray text-sm font-medium m-0;
 }
 
@@ -603,45 +630,29 @@ nav .navbar_wrapper .navbar_btns_wrapper button.small_screens_navbar_toggeler {
 }
 
 /* ✅ Delete Notification Button */
-.notifications_menu .notifications_menu_item .delete_btn_wrapper .delete_notification_btn {
+.notifications_menu
+  .notifications_menu_item
+  .delete_btn_wrapper
+  .delete_notification_btn {
   @apply flex items-center justify-center w-10 h-10 bg-secondaryTheme 
     text-midRed rounded-full transition hover:bg-red-200;
 }
 
 /* ✅ Delete Icon */
-.notifications_menu .notifications_menu_item .delete_btn_wrapper .delete_notification_btn i,
-.notifications_menu .notifications_menu_item .delete_btn_wrapper .delete_notification_btn svg {
+.notifications_menu
+  .notifications_menu_item
+  .delete_btn_wrapper
+  .delete_notification_btn
+  i,
+.notifications_menu
+  .notifications_menu_item
+  .delete_btn_wrapper
+  .delete_notification_btn
+  svg {
   @apply text-lg text-midRed;
 }
-
-nav .navbar_wrapper .navbar_btns_wrapper .user_profile_menu_wrapper {
-  position: relative;
-}
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_profile_menu_wrapper
-  .user_profile_menu_btn
-  .avatar_wrapper {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_profile_menu_wrapper
-  .user_profile_menu_btn
-  .avatar_wrapper
-  img {
-  width: 100%;
-  height: 100%;
-  -o-object-fit: cover;
-  object-fit: cover;
-}
 /* ✅ Tooltip Styling */
-.navbar_btns_wrapper button .toolTip {
+.navbar_btns_wrapper .toolTip {
   @apply absolute bottom-[-35px] left-0 right-0 
     w-max px-2 text-lg font-medium text-themeText 
     bg-themeBg shadow-lg rounded-lg 
@@ -650,75 +661,64 @@ nav
 }
 
 /* ✅ Tooltip Hover Effect */
-.navbar_btns_wrapper button:hover .toolTip {
+.navbar_btns_wrapper :hover .toolTip {
   @apply scale-100 opacity-100;
 }
 
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_profile_menu_wrapper
-  .user_profile_menu {
-  position: absolute;
-  top: 130%;
-  left: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  width: -moz-max-content;
-  width: max-content;
-  background-color: var(--theme_bg_clr);
-  border-radius: 10px;
-  box-shadow: 0 0 10px 2px var(--simple_shadow_clr);
-  z-index: 31;
-  overflow: hidden;
+.navbar_wrapper .navbar_btns_wrapper .user_profile_menu_wrapper {
+  @apply relative;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_profile_menu_wrapper
-  .user_profile_menu
-  .user_profile_menu_item {
-  transition: all 0.4s ease-in-out;
+
+.avatar_wrapper {
+  @apply size-10 rounded-[10px] overflow-hidden;
 }
-nav
-  .navbar_wrapper
+
+.navbar_wrapper
   .navbar_btns_wrapper
   .user_profile_menu_wrapper
-  .user_profile_menu
-  .user_profile_menu_item:hover {
-  background-color: var(--soft_main_theme_clr);
+  .user_profile_menu_btn
+  .avatar_wrapper
+  img {
+  @apply w-full h-full object-cover;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_profile_menu_wrapper
-  .user_profile_menu
-  .user_profile_menu_item:not(:last-of-type) {
-  border-bottom: 1px solid var(--very_light_theme_clr);
+
+.user_profile_menu {
+  @apply absolute top-[130%] left-0 m-0 p-0 list-none bg-themeBg rounded-[10px] shadow-[0_0_10px_2px_var(--simple_shadow_clr)] z-[31] overflow-hidden w-max;
 }
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_profile_menu_wrapper
-  .user_profile_menu
-  .user_profile_menu_item
-  a,
-nav
-  .navbar_wrapper
-  .navbar_btns_wrapper
-  .user_profile_menu_wrapper
-  .user_profile_menu
-  .user_profile_menu_item
-  button {
-  text-decoration: none;
-  display: block;
-  width: 100%;
-  text-align: center;
-  padding: 6px 25px;
-  color: var(--theme_text_clr);
-  font-size: 22px;
-  font-family: "ArbFONTS-Somar-Medium";
+
+.user_profile_menu_item {
+  @apply transition-all duration-[400ms] ease-in-out;
+}
+
+.user_profile_menu_item:hover {
+  @apply bg-softMainTheme;
+}
+
+.user_profile_menu_item a,
+.user_profile_menu_item button {
+  @apply block w-full text-center py-1.5 px-6 text-themeText text-[22px] font-medium no-underline;
+}
+.user_profile_menu_item a {
+  @apply relative;
+}
+
+/* ✅ PROFILE MENU ITEMS */
+
+
+.user_profile_menu_item:not(:last-of-type) {
+  @apply border-b !border-veryLightTheme;
+}
+
+/* ✅ FADE-IN TRANSITION */
+.fadeInUp-enter-active,
+.fadeInUp-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fadeInUp-enter-from,
+.fadeInUp-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 nav .small_screens_navbar_wrapper {
   position: fixed;
