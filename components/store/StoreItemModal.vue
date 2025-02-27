@@ -92,7 +92,7 @@ import { ref } from "vue";
 import { useStoreWishlist } from "@/stores/storeModule"; // ✅ Import Pinia store
 import BaseModal from "../global/BaseModal.vue";
 import { useNuxtApp } from "#app";
-const { $axios } = useNuxtApp();
+const axios = useNuxtApp().$axios;
 const props = defineProps({
   modalApperanceData: Boolean,
   selectedItem: Object,
@@ -154,15 +154,8 @@ const favClick = async (id) => {
     theData.append("fav_type", "product");
     theData.append("id", id);
 
-    const response = await $axios.post("user/favourite", theData, {
-      headers: {
-        // Authorization: `Bearer ${localStorage.getItem("elmo3lm_elmosa3d_user_token")}`,
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks`,
-        "Accept-language": "ar",
-        // "Accept-language": cookies.get("elmo3lm_elmosa3d_app_lang"),        "cache-control": "no-cache",
-        "cache-control": "no-cache",
-        Accept: "application/json",
-      },
+    const response = await axios.post("user/favourite", theData, {
+      
     });
     console.log("✅ API Response:", response.data);
 

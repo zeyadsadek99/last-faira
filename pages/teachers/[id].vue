@@ -10,8 +10,6 @@
         bgColor="bg-[#F5ECFF]"
         bgImage="/media/shapes/pi_sempole.svg"
         :customStyle="{ marginLeft: '-80px' }"
-
-
       >
         <div class="header-container container">
           <div class="container">
@@ -105,7 +103,9 @@
                   class="w-28 h-32 object-contain rounded-lg"
                 />
                 <div class="ml-4">
-                  <h2 class="text-[2rem] font-bold">{{ specialization.name }}</h2>
+                  <h2 class="text-[2rem] font-bold">
+                    {{ specialization.name }}
+                  </h2>
                 </div>
               </div>
             </div>
@@ -117,12 +117,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import { useNuxtApp } from "#app";
-// import Loader1 from "~/components/Loader1.vue";
-
-const { $axios } = useNuxtApp();
+const axios = useNuxtApp().$axios;
 const route = useRoute();
 const isLoading = ref(true);
 const teacherDetails = ref({});
@@ -130,17 +125,8 @@ const teacherDetails = ref({});
 // ✅ Fetch Teacher Profile
 const getTeacherProfile = async () => {
   try {
-    const response = await $axios.get(
-      `/student/teacher_profile/${route.params.id}`,
-      {
-        headers: {
-          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks`,
-
-          // Authorization: `Bearer YOUR_ACCESS_TOKEN`,
-          "Accept-Language": "ar",
-          "Cache-Control": "no-cache",
-        },
-      }
+    const response = await axios.get(
+      `/student/teacher_profile/${route.params.id}`
     );
 
     teacherDetails.value = response.data.data;

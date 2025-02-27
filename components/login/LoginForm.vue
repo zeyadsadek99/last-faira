@@ -29,20 +29,26 @@
         <!-- ✅ Phone Input -->
         <div class="relative">
           <div class="input-wrapper flex justify-between" dir="ltr">
-            <button
+            <!-- <button
               @click="toggleCountryMenu"
               type="button"
               class="flex items-center text-gray-700"
             >
               <img :src="selectedCountry?.flag" alt="Flag" class="w-5 h-3" />
               <span class="ml-2">{{ selectedCountry?.key }}</span>
-            </button>
-            <InputsBase
+            </button> -->
+            <!-- <InputsBase
               type="phone"
               id="mobile"
               name="mobile"
               v-model="loginData.phone"
               size="60"
+              :placeholder="t('PLACEHOLDERS.phone')"
+              class="w-full"
+            /> -->
+            <InputsPhone
+              id="mobile"
+              name="mobile"
               :placeholder="t('PLACEHOLDERS.phone')"
               class="w-full"
             />
@@ -51,12 +57,19 @@
         <!-- ✅ Password Input -->
         <div class="relative">
           <div class="input-wrapper">
-            <InputsPassword
+            <!-- <InputsPassword
               id="password"
               name="password"
               v-model="loginData.password"
               :placeholder="t('PLACEHOLDERS.password')"
               icon="key"
+              class="w-full"
+            /> -->
+            <InputsText
+              id="password"
+              name="password"
+              type="password"
+              :placeholder="t('PLACEHOLDERS.password')"
               class="w-full"
             />
           </div>
@@ -98,7 +111,7 @@
       <p class="register-route">
         {{ t("BUTTONS.dont_have_account") }}
         <NuxtLink
-          to="/register"
+          to="/login/SelectRegisterType"
           class="text-mainTheme font-semibold hover:underline"
         >
           {{ t("BUTTONS.register") }}
@@ -111,31 +124,11 @@
 
 <script setup>
 import { useI18n } from "vue-i18n";
-import { useApiStore } from "@/stores/apiStores";
 import * as yup from "yup";
-import { useCookies } from "vue3-cookies";
 import { useToast } from "vue-toastification"; // ✅ Using Vue Toastification
-import { useAuthenticationStore } from "~/stores/authentication"; //  
-
+import { useAuthenticationStore } from "~/stores/authentication"; //
 
 const { t } = useI18n();
-
-const apiStore = useApiStore();
-
-const isLoading = ref(false);
-const isPasswordVisible = ref(false);
-const isCountryMenuOpen = ref(false);
-const loginData = ref({ phone: "", password: "" });
-
-const countries = computed(() => apiStore.countries);
-
-const selectedCountry = computed(() => apiStore.selectedCountryKey);
-
-onMounted(async () => {
-  await apiStore.getCountries();
-});
-
-
 
 // const validateLoginForm = async () => {
 //   if (!loginData.value.phone) {
@@ -152,17 +145,10 @@ onMounted(async () => {
 //   await submitLoginForm();
 // };
 
-const success = ref(false);
-const fail = ref(false);
 const loading = ref(false);
-const message = ref("");
-const isWaitingRequest = ref(false);
-const countryKeysMenuIsOpen = ref(false);
 
-const { cookies } = useCookies();
-
-const { $axios } = useNuxtApp();
-
+const axios = useNuxtApp().$axios;
+const router = useRouter();
 const toast = useToast(); // ✅ Initialize Toast
 const authStore = useAuthenticationStore();
 const schema = yup.object({
@@ -175,119 +161,86 @@ const schema = yup.object({
     .min(6, t("ERRORS.password_length"))
     .required(t("ERRORS.isRequired", { name: t("LABELS.password") })),
 });
-const submitLoginForm = async () => {
-  console.log("zoz");
-  isWaitingRequest.value = true;
+
+const submitLoginForm = async (values) => {
+  console.log(values);
+
+  loading.value = true;
 
   const theData = new FormData();
-  // ✅ Append Static Data
+
   theData.append("type", "ios");
   theData.append("device_token", "static_device_token");
-  console.log(selectedCountry)
-  // ✅ Append User Login Data
-  theData.append("country_id", selectedCountry.value.id);
-  theData.append("identifier", loginData.value.phone.replace(/^[0.]+/, ""));
-  theData.append("password", loginData.value.password);
+  theData.append("country_id", values.phone_code);
+  theData.append("identifier", values.mobile);
+  theData.append("password", values.password);
 
   try {
     // ✅ Send Login Request
-    const res = await $axios.post("login", theData, {});
+    const res = await axios.post("login", theData);
 
-    isWaitingRequest.value = false;
+    loading.value = false;
 
-    // ✅ Show Success Message with Vue Toastification
-    toast.success(t("VALIDATION.login_success"), {
-      timeout: 3000,
-      position: "top-right",
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: true,
-      draggable: true,
-      draggablePercent: 0.6,
-      showCloseButtonOnHover: true,
-      icon: true,
-      rtl: t("iziToastConfigs.dir") === "rtl",
-    });
+    toast.success(t("VALIDATION.login_success"));
 
-    // ✅ Store User Data in Pinia & Cookies
-    authStore.setAuthenticatedUserData({
-      type: res.data.data.user_type,
-      token: res.data.data.token.access_token,
-      avatar: res.data.data.profile_image,
-    });
+    authStore.profile = res?.data?.data;
 
-    cookies.set("elmo3lm_elmosa3d_user_id", res.data.data.id);
-    cookies.set(
-      "elmo3lm_elmosa3d_user_token",
-      res.data.data.token.access_token,
-      { path: "/", secure: true }
-    );
-    cookies.set("elmo3lm_elmosa3d_user_type", res.data.data.user_type, {
-      path: "/",
-      secure: true,
-    });
+    useCookie("elmo3lm_elmosa3d_user_token").value =
+      res.data.data.token.access_token;
+    useCookie("elmo3lm_elmosa3d_user_type").value = res.data.data.user_type;
+    useCookie("elmo3lm_elmosa3d_user_avatar").value = res.data.data.profile_image;
 
-    // ✅ Store Additional Data for Students
-    if (res.data.data?.user_type === "student") {
-      cookies.set(
-        "elmo3lm_elmosa3d_student_parent_phone",
-        res.data.data?.child_parent?.parent?.phone,
-        { path: "/" }
-      );
-      cookies.set(
-        "elmo3lm_elmosa3d_student_parent_key",
-        JSON.stringify(res.data.data?.child_parent?.parent?.country),
-        { path: "/" }
-      );
-    }
+    router.push("/");
+    //  for Students
+    // if (res.data.data?.user_type === "student") {
+    //   useCookie(
+    //     "elmo3lm_elmosa3d_student_parent_phone",
+    //     res.data.data?.child_parent?.parent?.phone,
+    //     { path: "/" }
+    //   );
+    //   useCookie(
+    //     "elmo3lm_elmosa3d_student_parent_key",
+    //     JSON.stringify(res.data.data?.child_parent?.parent?.country),
+    //     { path: "/" }
+    //   );
+    // }
 
-    clearLoginFormData();
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    // clearLoginFormData();
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1000);
   } catch (err) {
-    isWaitingRequest.value = false;
+    loading.value = false;
     console.error(err);
 
     // ✅ Show Error Message with Vue Toastification
-    toast.error(err.response?.data?.message || t("VALIDATION.login_failed"), {
-      timeout: 4000,
-      position: "top-right",
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: true,
-      draggable: true,
-      draggablePercent: 0.6,
-      showCloseButtonOnHover: true,
-      icon: true,
-      rtl: t("iziToastConfigs.dir") === "rtl",
-    });
+    toast.error(err.response?.data?.message || t("VALIDATION.login_failed"));
   }
 };
-const toggleCountryKeysMenu = () => {
-  countryKeysMenuIsOpen.value = !countryKeysMenuIsOpen;
-};
+// const toggleCountryKeysMenu = () => {
+//   countryKeysMenuIsOpen.value = !countryKeysMenuIsOpen;
+// };
 // const togglePasswordVisibility = () => {
 //   isPasswordVisible.value = !isPasswordVisible.value;
 // };
 
-const toggleCountryMenu = () => {
-  isCountryMenuOpen.value = !isCountryMenuOpen.value;
-};
+// const toggleCountryMenu = () => {
+//   isCountryMenuOpen.value = !isCountryMenuOpen.value;
+// };
 
 // ✅ Toggle Password Visibility
-const togglePasswordVisibility = (event) => {
-  const passwordElement = event.currentTarget.parentElement.children[0];
-  const passwordTogglerBtn = event.currentTarget;
+// const togglePasswordVisibility = (event) => {
+//   const passwordElement = event.currentTarget.parentElement.children[0];
+//   const passwordTogglerBtn = event.currentTarget;
 
-  if (passwordElement.type === "password") {
-    passwordElement.type = "text";
-    passwordTogglerBtn.classList.add("password_is_visible");
-  } else {
-    passwordElement.type = "password";
-    passwordTogglerBtn.classList.remove("password_is_visible");
-  }
-};
+//   if (passwordElement.type === "password") {
+//     passwordElement.type = "text";
+//     passwordTogglerBtn.classList.add("password_is_visible");
+//   } else {
+//     passwordElement.type = "password";
+//     passwordTogglerBtn.classList.remove("password_is_visible");
+//   }
+// };
 </script>
 
 <style scoped>

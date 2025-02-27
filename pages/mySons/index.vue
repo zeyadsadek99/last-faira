@@ -1,27 +1,13 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useNuxtApp } from "#app";
-import GlobalBreadCrumbs from "~/components/global/GlobalBreadCrumbs.vue";
-// import Breadcrumb from "~/components/structure/TheBreadcrumb.vue";
-// import MainLoader from "~/components/ui/loaders/MainLoader.vue";
-
-const { $axios } = useNuxtApp(); // ✅ Access Nuxt’s global `$axios` instance
+const axios = useNuxtApp().$axios;
 
 const isLoading = ref(false);
 const userData = ref([]);
 
-// ✅ Fetch Data from API Using `$axios`
 const getSons = async () => {
   isLoading.value = true;
   try {
-    const response = await $axios.get("parent/my-children", {
-      headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTczOTg5MDA2NCwiZXhwIjoxNzcxNDI2MDY0LCJuYmYiOjE3Mzk4OTAwNjQsImp0aSI6Ik84cHRPaUFDOGZtS3NUV1kiLCJzdWIiOiIxNzQiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.tetCd0ksKooO1a7Bj5V5o8EifI30H7hX1ZpyzlazjMw`,
-        "Accept-language": process.client ? localStorage.getItem("elmo3lm_elmosa3d_app_lang") || "en" : "en",
-        "cache-control": "no-cache",
-        Accept: "application/json",
-      },
-    });
+    const response = await axios.get("parent/my-children");
 
     userData.value = response.data.data;
   } catch (error) {
@@ -53,7 +39,9 @@ onMounted(() => {
     <!-- ✅ Sons List -->
     <div v-else class="sons-content-wrapper fadeIn py-9">
       <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+        >
           <!-- ✅ Son Card -->
           <NuxtLink
             v-for="son in userData"
@@ -71,7 +59,9 @@ onMounted(() => {
             </div>
 
             <!-- ✅ Name -->
-            <h3 class="name text-center mt-4 text-2xl font-medium text-themeText">
+            <h3
+              class="name text-center mt-4 text-2xl font-medium text-themeText"
+            >
               {{ son.child_data.fullname }}
             </h3>
 

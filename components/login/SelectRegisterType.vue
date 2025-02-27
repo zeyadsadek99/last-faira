@@ -26,7 +26,7 @@
           <!-- START:: REGISTER TYPE ROUTE -->
           <div class="register_type_wrapper">
             <NuxtLink
-              to="/register-first-step/teacher"
+              to="/register/registerTeacher"
               class="register_type_route block p-6  shadow-lg hover:shadow-xl transition-shadow duration-300 text-center bg-[var(--soft_main_theme_clr)]"
             >
               <h3 class=" font-semibold mb-4">

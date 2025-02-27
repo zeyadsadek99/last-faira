@@ -4,7 +4,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: false },
-  ssr: true,
+  ssr: false,
   spaLoadingTemplate: false,
 
   // ========== START:: APP CONFIGURATIONS ========== //
@@ -99,6 +99,10 @@ export default defineNuxtConfig({
       src: "~/plugins/vue-toastification.client.ts",
       mode: "client",
     },
+    {
+      src: "~/plugins/fontawesome.js",
+      mode: "client",
+    },
     "~/plugins/i18n.client.ts",
     {
       src: "~/plugins/vue-google-maps.client.ts",
@@ -122,7 +126,7 @@ export default defineNuxtConfig({
       baseURL: "https://egypt-api.faiera.com/api/",
       general: "https://egypt-api.faiera.com/api/",
       googleMapsApiKey: "AIzaSyBGrfzw_Qd0p8vzu4ySc5aAZRalrH1EgEY",
-      userType: "zoz",
+      // userType: "zoz",
 
       // baseURL: "https://backend.ngtsa.com/api/website",
       // general: "https://backend.ngtsa.com/api",

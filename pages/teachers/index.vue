@@ -9,8 +9,6 @@
         bgColor="bg-[#F5ECFF]"
         bgImage="/media/shapes/pi_sempole.svg"
         :customStyle="{ marginLeft: '-80px' }"
-
-
       >
         <div class="header-container container pb-5">
           <div class="container flex justify-start items-center">
@@ -18,7 +16,7 @@
               <img
                 src="@/assets/media/images/pi.png"
                 alt="teachers"
-                class="w-[50%]  object-contain"
+                class="w-[50%] object-contain"
               />
               <h1 class="text-[5rem] font-bold text-themeText">
                 {{ $t("TITLES.teachers") }}
@@ -248,15 +246,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useNuxtApp } from "#app";
 import image2 from "../../assets/media/shapes/pi_sempole.svg";
-//   import MainLoader from "@/components/ui/loaders/MainLoader.vue";
-//   import ImageHeader from "@/components/ui/ImageHeader.vue";
-//   import SolidCard from "@/components/ui/SolidCard.vue";
-//   import GlobalPagination from "@/components/global/GlobalPagination.vue";
 
-const { $axios } = useNuxtApp(); // 🔥 Use Nuxt 3 Axios
+const axios = useNuxtApp().$axios;
 
 const isLoading = ref(true);
 const showDropdown = ref(false);
@@ -277,15 +269,8 @@ const specializations = ref([]);
 const getTeachers = async () => {
   isLoading.value = true;
   try {
-    const response = await $axios.get("/student/all_teachers", {
+    const response = await axios.get("/student/all_teachers", {
       // params: { page: currentPage.value },
-      headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks`,
-        //   Authorization: `Bearer ${authStore.token}`,
-        "Accept-Language": "ar",
-        //   "Accept-Language": authStore.language,
-        "Cache-Control": "no-cache",
-      },
     });
     teachers.value = response.data.data;
   } catch (error) {
@@ -296,14 +281,7 @@ const getTeachers = async () => {
 };
 const getCities = async () => {
   try {
-    const response = await $axios.get("/cities", {
-      headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDI5NTUwNCwiZXhwIjoxNzcxODMxNTA0LCJuYmYiOjE3NDAyOTU1MDQsImp0aSI6InVscE5rTVBCYnhQY0NYU1MiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.JdnZaVm7B3_gErAeelc-CBIqtLGLVtS3Ri-48r2pous`,
-
-        "Accept-Language": "ar",
-        "Cache-Control": "no-cache",
-      },
-    });
+    const response = await axios.get("/cities", {});
     cities.value = response.data.data;
   } catch (error) {
     console.error(error);
@@ -313,14 +291,7 @@ const getCities = async () => {
 // ✅ Get All Degrees
 const getDegrees = async () => {
   try {
-    const response = await $axios.get("/degrees", {
-      headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDI5NTUwNCwiZXhwIjoxNzcxODMxNTA0LCJuYmYiOjE3NDAyOTU1MDQsImp0aSI6InVscE5rTVBCYnhQY0NYU1MiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.JdnZaVm7B3_gErAeelc-CBIqtLGLVtS3Ri-48r2pous`,
-
-        "Accept-Language": "ar",
-        "Cache-Control": "no-cache",
-      },
-    });
+    const response = await axios.get("/degrees");
     degrees.value = response.data.data;
   } catch (error) {
     console.error(error);
@@ -332,16 +303,8 @@ const getSpecializations = async () => {
   if (!selectedDegreeId.value) return;
 
   try {
-    const response = await $axios.get(
-      `/specializations/${selectedDegreeId.value}`,
-      {
-        headers: {
-          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDI5NTUwNCwiZXhwIjoxNzcxODMxNTA0LCJuYmYiOjE3NDAyOTU1MDQsImp0aSI6InVscE5rTVBCYnhQY0NYU1MiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.JdnZaVm7B3_gErAeelc-CBIqtLGLVtS3Ri-48r2pous`,
-
-          "Accept-Language": "ar",
-          "Cache-Control": "no-cache",
-        },
-      }
+    const response = await axios.get(
+      `/specializations/${selectedDegreeId.value}`
     );
     specializations.value = response.data.data;
   } catch (error) {
@@ -352,14 +315,7 @@ const getSpecializations = async () => {
 // ✅ Get All Subjects
 const getSubjects = async () => {
   try {
-    const response = await $axios.get("/student/all-subject-name", {
-      headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDI5NTUwNCwiZXhwIjoxNzcxODMxNTA0LCJuYmYiOjE3NDAyOTU1MDQsImp0aSI6InVscE5rTVBCYnhQY0NYU1MiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.JdnZaVm7B3_gErAeelc-CBIqtLGLVtS3Ri-48r2pous`,
-
-        "Accept-Language": "ar",
-        "Cache-Control": "no-cache",
-      },
-    });
+    const response = await axios.get("/student/all-subject-name");
     subjects.value = response.data.data;
   } catch (error) {
     console.error(error);
@@ -370,7 +326,7 @@ const getSubjects = async () => {
 const searchTeachers = async () => {
   isLoading.value = true;
   try {
-    const response = await $axios.get("/student/all_teachers", {
+    const response = await axios.get("/student/all_teachers", {
       params: {
         keyword: searchKeyword.value,
         city_id: selectedCityId.value,
@@ -378,12 +334,6 @@ const searchTeachers = async () => {
         subject_id: selectedSubjectId.value,
         degree_id: selectedDegreeId.value,
         specialization_id: selectedSpecializationId.value,
-      },
-      headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDI5NTUwNCwiZXhwIjoxNzcxODMxNTA0LCJuYmYiOjE3NDAyOTU1MDQsImp0aSI6InVscE5rTVBCYnhQY0NYU1MiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.JdnZaVm7B3_gErAeelc-CBIqtLGLVtS3Ri-48r2pous`,
-
-        "Accept-Language": "ar",
-        "Cache-Control": "no-cache",
       },
     });
     teachers.value = response.data.data;

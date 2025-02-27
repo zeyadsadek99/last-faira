@@ -7,16 +7,18 @@
     <div v-else class="courses-section fadeIn">
       <!-- ✅ Image Header -->
       <ImageHeader>
-        <div class="header-container container flex items-center justify-start h-full">
+        <div
+          class="header-container container flex items-center justify-start h-full"
+        >
           <div class="container mx-auto px-4">
             <div class="header-title">
               <h1
-                class=" text-[5rem] font-bold mb-0"
+                class="text-[5rem] font-bold mb-0"
                 v-if="$route.params.id !== 'distance-learning-lessons'"
               >
                 {{ categoryData.name }}
               </h1>
-              <h1 class=" text-[5rem] font-bold mb-0" v-else>
+              <h1 class="text-[5rem] font-bold mb-0" v-else>
                 {{ $t("TITLES.all_courses") }}
               </h1>
             </div>
@@ -39,8 +41,8 @@
           <div class="subjects-wrapper">
             <h2 class="section-title">{{ $t("TITLES.subjects") }}</h2>
             <MessagesCourseEmpty
-            v-if="subjects.length === 0"
-              :imageSrc= image1
+              v-if="subjects.length === 0"
+              :imageSrc="image1"
               :message="$t('TITLES.empty_courses')"
             />
 
@@ -129,33 +131,22 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
-import { useRoute } from "vue-router";
 import { useAuthenticationStore } from "@/stores/authentication"; // Pinia store for authentication
-import { useNuxtApp } from "#app"; // Nuxt app for axios instance
-import Loader1 from "~/components/Loader1.vue";
-import image1 from "/assets/media/empty_messages/empty_courses.png"
-// Import Components
-//   import MainLoader from "@/components/ui/loaders/MainLoader.vue";
-//   import ImageHeader from "@/components/ui/ImageHeader.vue";
-//   import ImagedCard from "@/components/ui/ImagedCard.vue";
-//   import EmptyCoursesMessage from "@/components/ui/emptyMessages/EmptyCoursesMessage.vue";
-//   import GlobalPagination from "@/components/ui/GlobalPagination.vue";
+import image1 from "/assets/media/empty_messages/empty_courses.png";
 
-// Initialize Nuxt app
-const { $axios } = useNuxtApp();
+const axios = useNuxtApp().$axios;
 const route = useRoute();
-const authStore = useAuthenticationStore(); // Pinia store for authentication
+const authStore = useAuthenticationStore();
 
 const isLoading = ref(true);
 const subjects = ref([]);
 const categoryData = ref({});
-const registeredUserType = ref("teacher");
-//   const registeredUserType = ref(localStorage.getItem("elmo3lm_elmosa3d_user_type"));
+const registeredUserType = ref(
+  useCookie("elmo3lm_elmosa3d_user_type") || "visitor"
+);
 const currentPage = ref(1);
 const lastPage = ref(null);
 
-// ✅ Fetch Course Data using $axios
 const getCoursesData = async () => {
   isLoading.value = true;
   // else if (registeredUserType.value === "teacher") {
@@ -165,20 +156,14 @@ const getCoursesData = async () => {
   let url = "";
   if (route.params.id === "distance-learning-lessons") {
     url = "/student/all-subject-name";
+  } else if (registeredUserType.value === "teacher") {
+    url = `/teacher/category/${route.params.id}`;
   } else {
     url = `/student/category/courses/${route.params.id}?page=${currentPage.value}`;
   }
 
   try {
-    const response = await $axios.get(url, {
-      headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks`,
-        //   Authorization: `Bearer ${authStore.token}`,
-        "Accept-Language": "ar",
-        //   "Accept-Language": authStore.language,
-        "Cache-Control": "no-cache",
-      },
-    });
+    const response = await axios.get(url);
 
     if (route.params.id === "distance-learning-lessons") {
       subjects.value = response.data.data;
@@ -207,13 +192,11 @@ const redirectRoute = (course_id) => {
     : `/courses-categories/${course_id}`;
 };
 
-// ✅ Pagination Click Handling
 const pagenationClick = (pageNum) => {
   currentPage.value = pageNum;
   getCoursesData();
 };
 
-// ✅ Fetch Data on Component Mount & Watch Route Changes
 onMounted(getCoursesData);
 watch(() => route.params.id, getCoursesData);
 </script>

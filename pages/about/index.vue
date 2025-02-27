@@ -7,18 +7,22 @@
     <!-- START:: PAGE CONTENT -->
     <div class="about_us_page_wrapper fadeIn" v-else>
       <!-- START:: BREADCRUMB -->
-       <GlobalBreadCrumbs>
+      <GlobalBreadCrumbs>
         <template #page_title>
           {{ t("TITLES.about_us") }}
         </template>
         <template #breadcrumb_current_page>
           {{ t("TITLES.about_us") }}
         </template>
-      </GlobalBreadCrumbs> 
+      </GlobalBreadCrumbs>
       <!-- END:: BREADCRUMB -->
 
       <!-- START:: ABOUT US PAGE CONTENT -->
-      <AboutUs v-if="homeData" :aboutUsData="homeData.about" :hideMoreButton="true"/>
+      <AboutUs
+        v-if="homeData"
+        :aboutUsData="homeData.about"
+        :hideMoreButton="true"
+      />
       <!-- END:: ABOUT US PAGE CONTENT -->
 
       <!-- START:: CONTACT SECTION -->
@@ -30,23 +34,17 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useNuxtApp, useAsyncData } from "#app";
-// import Breadcrumb from "@/components/structure/TheBreadcrumb.vue";
-// import MainLoader from "@/components/ui/loaders/MainLoader.vue";
 import AboutUs from "@/components/about/AboutUs.vue";
 import ContactUs from "@/components/home/ContactUs.vue";
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 // ✅ Inject Axios from Plugin
-const { $axios } = useNuxtApp();
+const axios = useNuxtApp().$axios;
 const isLoading = ref(false);
 const homeData = ref(null);
 
 // ✅ Detect user type
-const userType = computed(() =>
-  process.client ? localStorage.getItem("elmo3lm_elmosa3d_user_type") : null
-);
+const userType = computed(() => useCookie("elmo3lm_elmosa3d_user_type").value);
 
 // ✅ Define API Endpoint Dynamically
 const endpoint = computed(() => {
@@ -56,11 +54,10 @@ const endpoint = computed(() => {
   return "visitor/home"; // Default for visitors
 });
 
-// ✅ Fetch Home Data Using Injected Axios
 const getHomeData = async () => {
   isLoading.value = true;
   try {
-    const response = await $axios.get(endpoint.value);
+    const response = await axios.get(endpoint.value);
     homeData.value = response.data.data;
   } catch (error) {
     console.error("Error fetching home data:", error);

@@ -5,11 +5,10 @@ import "@fortawesome/fontawesome-free/js/all.min.js";
 const axios = useNuxtApp().$axios;
 const { locale, t } = useI18n();
 const i18n: any = useI18n();
-const userType = ref(process.client ? localStorage.getItem("elmo3lm_elmosa3d_user_type") : null);
+const userType = ref(useCookie("elmo3lm_elmosa3d_user_token").value = null);
 const route = useRoute();
 const isLoading = ref(false);
 const homeData = ref(null);
-const { $axios } = useNuxtApp();
 const endpoint = computed(() => {
   if (userType.value === "teacher") return "teacher/home";
   if (userType.value === "student") return "student/home";
@@ -19,7 +18,7 @@ const endpoint = computed(() => {
 const getHomeData = async () => {
   isLoading.value = true;
   try {
-    const response = await $axios.get(endpoint.value);
+    const response = await axios.get(endpoint.value);
     homeData.value = response.data.data;
   } catch (error) {
     console.error("Error fetching home data:", error);

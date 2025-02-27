@@ -31,7 +31,7 @@
           <button
             type="button"
             class="far absolute top-1/2 end-3 -translate-y-1/2 text-sub"
-            :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+            :class="showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"
             @click="showPassword = !showPassword"
           ></button>
           <button

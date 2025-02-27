@@ -2,10 +2,14 @@
   <div class="courses-categories fadeIn">
     <!-- ✅ Image Header -->
     <ImageHeader bgColor="bg-[#bdfcd7]">
-      <div class="header-container container flex items-center justify-start h-full">
-        <div class="container  mx-auto px-4">
+      <div
+        class="header-container container flex items-center justify-start h-full"
+      >
+        <div class="container mx-auto px-4">
           <div class="header-title">
-            <h1 class="w-[30%] text-[5rem] font-bold mb-0">{{ courseDetails?.subject_name?.subject_name }}</h1>
+            <h1 class="w-[30%] text-[5rem] font-bold mb-0">
+              {{ courseDetails?.subject_name?.subject_name }}
+            </h1>
           </div>
         </div>
       </div>
@@ -27,8 +31,11 @@
             />
 
             <div v-else class="fadeIn">
-              <MessagesCourseEmpty :imageSrc= image1
-              :message="$t('TITLES.empty_courses')" v-if="registeredCourses?.length == 0" />
+              <MessagesCourseEmpty
+                :imageSrc="image1"
+                :message="$t('TITLES.empty_courses')"
+                v-if="registeredCourses?.length == 0"
+              />
 
               <div
                 v-else
@@ -66,8 +73,11 @@
             />
 
             <div v-else class="fadeIn">
-              <MessagesCourseEmpty :imageSrc= image1
-              :message="$t('TITLES.empty_courses')" v-if="onlineCourses.length === 0" />
+              <MessagesCourseEmpty
+                :imageSrc="image1"
+                :message="$t('TITLES.empty_courses')"
+                v-if="onlineCourses.length === 0"
+              />
 
               <div
                 v-else
@@ -100,15 +110,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
 import { useAuthenticationStore } from "@/stores/authentication";
-import { useNuxtApp } from "#app";
-import image1 from "/assets/media/empty_messages/empty_courses.png"
-
+import image1 from "/assets/media/empty_messages/empty_courses.png";
 
 // ✅ Setup
-const { $axios } = useNuxtApp();
+const axios = useNuxtApp().$axios;
 const route = useRoute();
 const authStore = useAuthenticationStore();
 const isLoading = ref(false);
@@ -117,8 +123,9 @@ const registeredCourses = ref([]);
 const onlineCourses = ref([]);
 const { t } = useI18n();
 
-//   const registeredUserType = ref(localStorage.getItem("elmo3lm_elmosa3d_user_type"));
-const registeredUserType = ref("student");
+const registeredUserType = ref(
+  useCookie("elmo3lm_elmosa3d_user_type") || "visitor"
+);
 const currentTab = ref("registered_courses");
 const last_page = ref(null);
 const current_page = ref(1);
@@ -153,22 +160,14 @@ const getCourseDetails = async () => {
   }
 
   try {
-    const { data } = await $axios.get(url, {
-      headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDQ3NjMzOCwiZXhwIjoxNzcyMDEyMzM4LCJuYmYiOjE3NDA0NzYzMzgsImp0aSI6IjBMQTFHeVQxNmc4SE1TdlIiLCJzdWIiOiIxNjkiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.N9EjlH9UAt2bMWfDJdy19G6HsKmnccA6mZIfvuImeks`,
-        //   Authorization: `Bearer ${authStore.token}`,
-        "Accept-language": "ar",
-        //   "Accept-language": authStore.language,
-        "Cache-Control": "no-cache",
-      },
-    });
+    const { data } = await axios.get(url);
 
     courseDetails.value = data;
     last_page.value = data.meta?.last_page || null;
 
     if (currentTab.value === "registered_courses") {
       registeredCourses.value = data.data;
-      console.log(registeredCourses)
+      console.log(registeredCourses);
     } else {
       onlineCourses.value = data.data;
     }

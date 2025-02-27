@@ -4,12 +4,15 @@ import { useAuthenticationStore } from "@/stores/authentication";
 import { useNotificationsStore } from "@/stores/notifications";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import auth from "~/middleware/auth";
 
 // Stores
 const authStore = useAuthenticationStore();
 const notificationsStore = useNotificationsStore();
 const { t } = useI18n();
 const router = useRouter();
+
+const { profile,token } = storeToRefs(useAuthenticationStore());
 
 // Reactive State
 const smallScreensNavbarIsOpen = ref(false);
@@ -18,11 +21,11 @@ const profileMenuIsOpen = ref(false);
 const notificationsMenuIsOpen = ref(false);
 
 // Computed
-const registeredUserType = computed(() => authStore.userType);
+const registeredUserType = computed(() => authStore.type);
 const isAuthenticated = computed(() => authStore.isAuthenticated);
-const userData = computed(() => authStore.getAuthenticatedUserData);
+const userData = computed(() => authStore.getAuthenticatedUserData());
 const notificationsData = computed(() => notificationsStore.getNotifications);
-
+console.log(userData);
 // Navbar Links
 const navbarLinks = reactive([
   { id: "home", url: "/", text: "NAVBAR.home", user_type: "all" },
@@ -99,10 +102,10 @@ onUnmounted(() => {
   window.removeEventListener("click", closeMenus);
 });
 
-const logout = async () => {
-  await authStore.logout();
-  router.push("/login");
-};
+// const logout = async () => {
+//   await authStore.logout();
+//   router.push("/login");
+// };
 
 // Sticky Navbar
 const stickyNavbar = () => {
@@ -124,13 +127,14 @@ const stickyNavbar = () => {
 // Lifecycle Hooks
 onMounted(() => {
   // stickyNavbar();
-  if (isAuthenticated.value) {
+  if (useCookie("elmo3lm_elmosa3d_user_token").value) {
     notificationsStore.getNotifications();
   }
 });
 </script>
 <template>
-  <nav id="navbar" class="relative container py-6 bg-themeBg">
+
+  <nav id="navbar" class="relative py-3 bg-themeBg">
     <!-- START:: SEARCH -->
     <Search v-if="searchIsOpen" @closeSearch="toggleSearch" />
     <!-- END:: SEARCH -->
@@ -148,7 +152,7 @@ onMounted(() => {
             />
           </NuxtLink>
           <!-- END:: LOGO -->
-
+          <!-- {{ userData.value }} -->
           <!-- START:: NAVBAR LINKS -->
           <ul
             class="hidden md:flex md:items-center md:justify-between m-0 p-0 gap-12 list-none"
@@ -177,7 +181,7 @@ onMounted(() => {
         >
           <!-- START:: LOGIN ROUTE -->
           <NuxtLink
-            v-if="!authStore.getAuthenticatedUserData.token"
+            v-if="!userData.token"
             to="/login"
             class="relative text-[22px] font-semibold text-mainTheme px-[10px] py-2 no-underline"
           >
@@ -187,6 +191,7 @@ onMounted(() => {
 
           <!-- START:: REGISTER ROUTE -->
           <NuxtLink
+            v-if="!userData.token"
             to="/login/selectRegisterType"
             class="relative px-[10px] py-2 border-1 !border-mainTheme rounded-[10px] text-[22px] font-semibold text-mainTheme no-underline ease-in-out duration-700 hover:text-white"
             style="
@@ -201,7 +206,6 @@ onMounted(() => {
             @mouseleave="
               (e) => (e.currentTarget.style.backgroundPosition = '100%')
             "
-            v-if="!authStore.getAuthenticatedUserData.token"
           >
             {{ t("NAVBAR.register") }}
           </NuxtLink>
@@ -210,9 +214,9 @@ onMounted(() => {
 
           <!-- START:: ADD SUBJECT ROUTE -->
           <NuxtLink
+            v-if="!userData.token && registeredUserType == 'teacher'"
             to="/add-subject"
             class="add_subject_route"
-           
           >
             <span class="flex items-center justify-center">
               <i class="fa-solid fa-plus"></i>
@@ -287,14 +291,18 @@ onMounted(() => {
           <!-- END:: NOTIFICATION BUTTON -->
 
           <!-- START:: CHATS ROUTE -->
-          <NuxtLink v-if="isAuthenticated" to="/chats" class="chats_route">
+          <NuxtLink v-if="userData.token" to="/chats" class="chats_route">
             <i class="fa-regular fa-comment"></i>
             <span class="toolTip">{{ t("TOOLTIPS.chats") }}</span>
           </NuxtLink>
           <!-- END:: CHATS ROUTE -->
           <!-- ✅ STRENGTHENING REQUESTS ROUTE -->
           <NuxtLink
-            v-if="isAuthenticated && ['parent', 'teacher'].includes(userType)"
+            v-if="
+              userData.token &&
+              (registeredUserType == 'parent' ||
+                registeredUserType == 'teacher')
+            "
             to="/strengthening-requests"
             class="strengthening_requests"
           >
@@ -307,17 +315,18 @@ onMounted(() => {
 
           <!-- ✅ MY COURSES ROUTE -->
           <NuxtLink
+            v-if="userData.token && registeredUserType == 'student'"
             to="/my-courses"
             class="my_courses_route"
           >
-          <!-- <svg width="79px" height="79px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracurrentColorerCarrier" stroke-linecurrentcap="round" stroke-linejoin="round"></g><g id="SVGRepo_icurrentColoronCarrier"> <path d="M4 19V6.2C4 5.0799 4 4.51984 4.21799 4.09202C4.40973 3.71569 4.71569 3.40973 5.09202 3.21799C5.51984 3 6.0799 3 7.2 3H16.8C17.9201 3 18.4802 3 18.908 3.21799C19.2843 3.40973 19.5903 3.71569 19.782 4.09202C20 4.51984 20 5.0799 20 6.2V17H6C4.89543 17 4 17.8954 4 19ZM4 19C4 20.1046 4.89543 21 6 21H20M9 7H15M9 11H15M19 17V21" stroke="currentColor" stroke-width="2" stroke-linecurrentcap="round" stroke-linejoin="round"></path> </g></svg> -->
+            <!-- <svg width="79px" height="79px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracurrentColorerCarrier" stroke-linecurrentcap="round" stroke-linejoin="round"></g><g id="SVGRepo_icurrentColoronCarrier"> <path d="M4 19V6.2C4 5.0799 4 4.51984 4.21799 4.09202C4.40973 3.71569 4.71569 3.40973 5.09202 3.21799C5.51984 3 6.0799 3 7.2 3H16.8C17.9201 3 18.4802 3 18.908 3.21799C19.2843 3.40973 19.5903 3.71569 19.782 4.09202C20 4.51984 20 5.0799 20 6.2V17H6C4.89543 17 4 17.8954 4 19ZM4 19C4 20.1046 4.89543 21 6 21H20M9 7H15M9 11H15M19 17V21" stroke="currentColor" stroke-width="2" stroke-linecurrentcap="round" stroke-linejoin="round"></path> </g></svg> -->
             <i class="fa-solid fa-book"></i>
             <span class="toolTip">{{ t("TOOLTIPS.my_courses") }}</span>
           </NuxtLink>
 
           <!-- ✅ CART ROUTE -->
           <NuxtLink
-            v-if="isAuthenticated && userType === 'student'"
+            v-if="userData.token && registeredUserType == 'student'"
             to="/shopping-cart"
             class="shopping_cart_btn relative"
           >
@@ -327,17 +336,25 @@ onMounted(() => {
             }}</span>
             <span class="toolTip">{{ t("TOOLTIPS.shopping_cart") }}</span>
           </NuxtLink>
-          <!-- START:: USER PROFILE BUTTON -->
-          <div
-            class="relative user_profile_menu_wrapper"
-            v-if="authStore.getAuthenticatedUserData.token"
+
+          <!-- ✅ SEARCH BUTTON -->
+          <button
+            class="search_btn"
+            @click="toggleSearch"
+            v-if="userData.token && registeredUserType === 'student'"
           >
+            <i class="fa-solid fa-search"></i>
+            <span class="toolTip">{{ t("TOOLTIPS.search") }}</span>
+          </button>
+
+          <!-- START:: USER PROFILE BUTTON -->
+          <div class="relative user_profile_menu_wrapper" v-if="profile">
             <button
               class="user_profile_menu_btn"
               @click.stop="toggleProfileMenu"
             >
               <div class="avatar_wrapper">
-                <img :src="authStore.userAvatar" width="45" height="45" />
+                <img :src="profile.profile_image" width="45" height="45" />
               </div>
             </button>
 
@@ -703,7 +720,6 @@ nav .navbar_wrapper .navbar_btns_wrapper a {
 }
 
 /* ✅ PROFILE MENU ITEMS */
-
 
 .user_profile_menu_item:not(:last-of-type) {
   @apply border-b !border-veryLightTheme;

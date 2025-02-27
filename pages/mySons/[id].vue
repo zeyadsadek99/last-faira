@@ -89,24 +89,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import { useNuxtApp } from "#app";
 import { useAuthenticationStore } from "@/stores/authentication";
 
-//   import MainLoader from "@/components/ui/loaders/MainLoader.vue";
-import image1 from "/assets/media/empty_messages/empty_courses.png"
-//   import ImagedCard from "@/components/ui/ImagedCard.vue";
-//   import EmptyCoursesMessage from "@/components/ui/emptyMessages/EmptyCoursesMessage.vue";
-//   import Pagenation from "@/components/ui/pagenation.vue";
-import { useCookies } from "vue3-cookies";
-import Loader1 from "~/components/Loader1.vue";
+import image1 from "/assets/media/empty_messages/empty_courses.png";
 const authStore = useAuthenticationStore();
 const { t } = useI18n();
 
-const { cookies } = useCookies();
 const route = useRoute();
-const { $axios } = useNuxtApp();
+const axios = useNuxtApp().$axios;
 const isLoading = ref(true);
 const subjects = ref([]);
 const courseDetails = ref(null);
@@ -114,11 +104,8 @@ const registeredCourses = ref([]);
 const onlineCourses = ref([]);
 const categoryData = ref({});
 const registeredUserType = ref(
-  'parent' || "visitor"
+  useCookie("elmo3lm_elmosa3d_user_type") || "visitor"
 );
-// const registeredUserType = ref(
-//   cookies.get("elmo3lm_elmosa3d_user_type") || "visitor"
-// );
 const currentTab = ref("registered_courses");
 
 const lastPage = ref(null);
@@ -132,22 +119,15 @@ const getCoursesData = async () => {
   try {
     let response;
 
-      response = await $axios.get(`parent/subjectName?page=${this.current_page}&student_id=${this.$route.params.id}`, {
-        headers: {
-          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VneXB0LWFwaS5mYWllcmEuY29tL2FwaS9sb2dpbiIsImlhdCI6MTc0MDU2ODE5MywiZXhwIjoxNzcyMTA0MTkzLCJuYmYiOjE3NDA1NjgxOTMsImp0aSI6InIwcHdNWEpwTEVGTHVoRzEiLCJzdWIiOiIxNzQiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._SaIv1X934tARjRRlv8xr24nLOqN88hYgWfLT_ghk7Y`,
-        //   Authorization: `Bearer ${authStore.token}`,
-        "Accept-language": "ar",
-          // Authorization: `Bearer ${cookies.get("elmo3lm_elmosa3d_user_token")}`,
-          // "Accept-language": cookies.get("elmo3lm_elmosa3d_app_lang"),
-        },
-      });
+    response = await axios.get(
+      `parent/subjectName?page=${this.current_page}&student_id=${this.$route.params.id}`,
+      {}
+    );
 
-      
-      categoryData.value = response.data.category;
-      subjects.value = response.data.data;
-      lastPage.value = response.data.meta.last_page;
-    }
-   catch (error) {
+    categoryData.value = response.data.category;
+    subjects.value = response.data.data;
+    lastPage.value = response.data.meta.last_page;
+  } catch (error) {
     console.error("Error fetching courses:", error);
   } finally {
     isLoading.value = false;

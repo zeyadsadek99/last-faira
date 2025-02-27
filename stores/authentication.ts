@@ -1,84 +1,92 @@
 import { defineStore } from "pinia";
-import { useRouter } from "vue-router";
-import { useCookies } from "vue3-cookies";
+import axios from "axios";
+export const useAuthenticationStore = defineStore("authentication", () => {
+  const type = useCookie("elmo3lm_elmosa3d_user_type");
+  const token = useCookie("elmo3lm_elmosa3d_user_token");
+  const avatar = useCookie("elmo3lm_elmosa3d_user_avatar");
+  const config = useRuntimeConfig();
+  const getAuthenticatedUserData = () => ({
+    type: type.value || "",
+    token: token.value ? `Bearer ${token.value}` : "",
+    avatar: avatar.value || "",
+  });
+  console.log(getAuthenticatedUserData())
 
-import { useNuxtApp } from "#app";
-const { cookies } = useCookies();
+  const isAuthenticated = () => !!token.value;
+  const isTeacher = () => type.value === "teacher";
 
-export const useAuthenticationStore = defineStore("authentication", {
-  state: () => ({
-    userType: cookies.get("elmo3lm_elmosa3d_user_type"),
-    userToken: `Bearer ${cookies.get("elmo3lm_elmosa3d_user_token")}`,
-    userAvatar: cookies.get("elmo3lm_elmosa3d_user_avatar"),
-  }),
+  const initializeAuth = () => {
+    type.value = useCookie("elmo3lm_elmosa3d_user_type").value;
+    token.value = useCookie("elmo3lm_elmosa3d_user_token").value;
+    avatar.value = useCookie("elmo3lm_elmosa3d_user_avatar").value;
+  };
 
-  getters: {
-    getAuthenticatedUserData(state) {
-      return {
-        type: state.userType,
-        token: state.userToken,
-        avatar: state.userAvatar,
-      };
-    },
+  const setAuthenticatedUserData = (payload: {
+    type: string;
+    token: string;
+    avatar: string;
+  }) => {
+    type.value = payload.type;
+    token.value = payload.token;
+    avatar.value = payload.avatar;
 
-    isAuthenticated: (state) => !!state.userToken, // Boolean check
-    isTeacher: (state) => state.userType === "teacher",
-  },
+    console.log("✅ Cookies Set Successfully!");
+  };
 
-  actions: {
-    initializeAuth() {
-      const { cookies } = useCookies();
+  // Start
+  const profile = ref(null);
+  // const headers = computed(() => ({
+  //   Authorization: `Bearer ${token.value}`, // ✅ Token from Cookie
+  //   "Accept-language": "ar",
+  //   "cache-control": "no-cache",
+  //   Accept: "application/json",
+  // }));
 
-      this.userType = cookies.get("elmo3lm_elmosa3d_user_type");
-      this.userToken = cookies.get("elmo3lm_elmosa3d_user_token");
-      this.userAvatar = cookies.get("elmo3lm_elmosa3d_user_avatar");
-    },
+  const getProfile = async () => {
+    axios(`${config.public.baseURL}${type.value}/profile`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Accept-Language": useNuxtApp().$i18n.locale.value,
+        Authorization: `Bearer ${
+          token.value || useCookie("elmo3lm_elmosa3d_user_token").value
+        }`,
+      },
+    })
+      .then((res) => {
+        profile.value = res?.data?.data;
+        console.log("user", res?.data?.data?.user);
+        // getAllNotifications();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
-    setAuthenticatedUserData(payload: {
-      type: string;
-      token: string;
-      avatar: string;
-    }) {
-      const { cookies } = useCookies();
+  const logout = () => {
+    const router = useRouter();
 
-      // ✅ Set cookies with explicit expiration
-      const expiryDate = new Date();
-      expiryDate.setDate(expiryDate.getDate() + 7); // 7 days
-      // , {
-      //       expires: expiryDate,
-      //       path: "/",
-      //     }
-      // , {
-      //       expires: expiryDate,
-      //       path: "/",
-      //     }
-      // , {
-      //       expires: expiryDate,
-      //       path: "/",
-      //     }
-      cookies.set("elmo3lm_elmosa3d_user_type", payload.type);
-      cookies.set("elmo3lm_elmosa3d_user_token", payload.token);
-      cookies.set("elmo3lm_elmosa3d_user_avatar", payload.avatar);
+    type.value = null;
+    token.value = null;
+    avatar.value = null;
 
-      console.log("Cookies Set Successfully!");
-    },
+    console.log("✅ User Logged Out, Cookies Cleared!");
 
-    logout() {
-      const { cookies } = useCookies();
-      const router = useRouter();
+    router.replace("/");
+    window.location.reload();
+  };
 
-      // Remove auth cookies
-      cookies.remove("elmo3lm_elmosa3d_user_type");
-      cookies.remove("elmo3lm_elmosa3d_user_token");
-      cookies.remove("elmo3lm_elmosa3d_user_avatar");
-
-      this.userType = "";
-      this.userToken = "";
-      this.userAvatar = "";
-
-      // Refresh to clear store state & redirect
-      location.reload();
-      router.replace("/");
-    },
-  },
+  return {
+    type,
+    token,
+    avatar,
+    getAuthenticatedUserData,
+    isAuthenticated,
+    isTeacher,
+    initializeAuth,
+    setAuthenticatedUserData,
+    profile,
+    getProfile,
+    logout,
+  };
 });

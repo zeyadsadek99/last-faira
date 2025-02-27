@@ -13,7 +13,6 @@ const userType = ref(
 const route = useRoute();
 const isLoading = ref(false);
 const homeData = ref(null);
-const { $axios } = useNuxtApp();
 const endpoint = computed(() => {
   if (userType.value === "teacher") return "teacher/home";
   if (userType.value === "student") return "student/home";
@@ -23,7 +22,7 @@ const endpoint = computed(() => {
 const getHomeData = async () => {
   isLoading.value = true;
   try {
-    const response = await $axios.get(endpoint.value);
+    const response = await axios.get(endpoint.value);
     homeData.value = response.data.data;
   } catch (error) {
     console.error("Error fetching home data:", error);
@@ -37,6 +36,8 @@ const {
 
   refresh,
 } = await useLazyAsyncData("home", () => getHomeData());
+
+
 const scrollToSection = (sectionId: string) => {
   const section = document.getElementById(sectionId);
   if (section) {
@@ -148,7 +149,7 @@ onMounted(() => {
         </div>
         <!-- <GlobalTopButton /> -->
         <!-- :settings="settings" -->
-        <Footer />
+        <!-- <Footer /> -->
       </div>
     </Body>
   </Html>
