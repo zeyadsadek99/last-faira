@@ -6,11 +6,12 @@ import StudentFeaturedCourses from "~/components/home/StudentFeaturedCourses.vue
 import ParentFeaturedCourses from "~/components/home/ParentFeaturedCourses.vue";
 import CoursesCats from "~/components/home/CoursesCats.vue";
 import StudentFeaturedTeachers from "~/components/home/StudentFeaturedTeachers.vue";
+import TeacherFeaturedCourses from "~/components/home/TeacherFeaturedCourses.vue";
 
 const { t } = useI18n();
 const route = useRoute();
 
-const userToken = useCookie("elmo3lm_elmosa3d_user_token"); 
+const userToken = useCookie("elmo3lm_elmosa3d_user_token");
 const userType = useCookie("elmo3lm_elmosa3d_user_type");
 const appLang = useCookie("elmo3lm_elmosa3d_app_lang", { default: () => "ar" });
 
@@ -74,7 +75,10 @@ onMounted(() => {
         :Items="homeData?.newer_subject_name"
         v-if="userType !== 'parent' && userType !== 'teacher'"
       />
-
+      <TeacherFeaturedCourses
+        :Items="homeData?.my_subjects"
+        v-if="userType == 'teacher'"
+      />
       <ContactUs :contactUsData="homeData?.contacts" v-if="homeData" />
     </div>
   </div>

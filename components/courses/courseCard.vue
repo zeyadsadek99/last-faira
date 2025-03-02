@@ -18,7 +18,7 @@
   
       <!-- ✅ Course Details -->
       <div class="p-4">
-        <p class="text-lg font-semibold text-gray-800">{{ course.subject_name }}</p>
+        <p class="text-lg font-semibold text-gray-800">{{ course.subject_name.subject_name }}</p>
         <p class="text-sm text-gray-500">Duration: {{ course.num_of_hour }} Hours</p>
       </div>
     </NuxtLink>

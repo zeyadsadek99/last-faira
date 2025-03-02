@@ -1,6 +1,5 @@
 <template>
     <div>
-      {{'zozz'}}
         <RegisterFirst></RegisterFirst>
     </div>
 </template>
