@@ -4,7 +4,7 @@
     v-slot="{ field, meta }"
     v-if="allCountries && allCountries.length"
   >
-    <div class="absolute top-[0.5px] end-0">
+    <div class="relative top-[0.5px] end-0">
       <Listbox
         v-slot="{ open }"
         v-model="selected"
@@ -12,22 +12,22 @@
       >
         <div :class="countriesLoading && 'opacity-60'">
           <ListboxButton
-            class="relative h-[50px] overflow-hidden rounded-[15px]"
+            class="relative h-[50px] w-20 overflow-hidden p-3 bg-themeInputs rounded-[15px]"
           >
-            <div class="flex items-center border-s border-[#101624]">
+            <div class="flex items-center gap-2 text-xl text-themeText">
               <span
-                class="block truncate !pe-[10px] ps-5 text-start text-sm font-semibold"
+                class="block  text-start text-xl "
                 :class="selected ? 'text-text' : 'text-title'"
                 :title="selected ? selected.key : ''"
                 >{{
                   selected ? selected.key : $t("FORMS.Placeholders.phoneCode")
                 }}
-                +
+                
               </span>
               <img
                 v-if="selected"
                 :src="selected.flag"
-                class="h-[20px] w-[50px] object-contain"
+                class="h-[20px] w-[30px] object-fill"
                 :alt="`${selected.name}-image`"
                 @error="handleImageError"
               />
@@ -40,7 +40,7 @@
             leave-to-class="opacity-0"
           >
             <ListboxOptions
-              class="absolute z-[1010] max-h-60 w-full overflow-auto rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+              class="absolute z-[1010] top-[110%] max-h-60 w-full overflow-auto rounded-[15px] bg-themeInputs hover:bg-mainTheme "
               v-bind="field"
             >
               <ListboxOption
@@ -51,19 +51,19 @@
                 :value="country"
               >
                 <li
-                  class="cursor relative cursor-pointer select-none border-b border-border px-4 py-2 duration-300 last-of-type:border-none"
+                  class="cursor relative cursor-pointer select-none border-b border-border p-3 duration-300 last-of-type:border-none"
                   :class="{
                     'bg-teal-600 text-primary': active,
                     'text-text': !active,
                   }"
                 >
                   <div class="flex items-center gap-2">
-                    <span class="block text-sm font-medium"
-                      >{{ country.key }}+</span
+                    <span class="block text-themeText text-xl "
+                      >{{ country.key }}</span
                     >
                     <img
                       :src="country.flag"
-                      class="h-[20px] w-[50px] object-contain"
+                      class="h-[20px] w-[30px] object-fill"
                       :alt="`${country.name}-image`"
                       @error="handleImageError"
                     />

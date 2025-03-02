@@ -14,7 +14,7 @@
         :placeholder="placeholder"
         :autocomplete="name"
         :disabled="disabled"
-        class="block h-[50px] w-full rounded-[8px] px-6 text-sm"
+        class="block h-[54px] border-none text-themeText bg-themeInputs w-full rounded-[15px] p-3 text-xl"
         :class="[
           meta.touched && !meta.valid
             ? 'border-red-500 text-red-500 placeholder:text-red-200 bg-card_color'

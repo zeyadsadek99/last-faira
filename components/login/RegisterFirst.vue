@@ -24,7 +24,7 @@
           data-aos-duration="1200"
         >
           <!-- ✅ Username & Mobile -->
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-2 gap-6">
             <InputsText
               id="username"
               name="username"
@@ -40,8 +40,8 @@
           </div>
 
           <!-- ✅ City Selection (Dropdown) -->
-          <div class="relative">
-            <Combobox v-model="formData.city">
+          <div class="relative w-10">
+            <Combobox>
               <div class="relative">
                 <Combobox.Button
                   class="w-full flex items-center justify-between border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-mainTheme"
@@ -85,7 +85,82 @@
               </div>
             </Combobox>
           </div>
+          <Combobox v-model="selected">
+      <div class="relative mt-1">
+        <div
+          class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
+        >
+          <ComboboxInput
+            class="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+            :displayValue="(person) => person.name"
+            @change="query = $event.target.value"
+          />
+          <ComboboxButton
+            class="absolute inset-y-0 right-0 flex items-center pr-2"
+          >
+            <ChevronUpDownIcon
+              class="h-5 w-5 text-gray-400"
+              aria-hidden="true"
+            />
+          </ComboboxButton>
+        </div>
+        <TransitionRoot
+          leave="transition ease-in duration-100"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+          @after-leave="query = ''"
+        >
+          <ComboboxOptions
+            class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+          >
+            <div
+              v-if="filteredPeople.length === 0 && query !== ''"
+              class="relative cursor-default select-none px-4 py-2 text-gray-700"
+            >
+              Nothing found.
+            </div>
 
+            <ComboboxOption
+              v-for="person in people"
+              as="template"
+              :key="person.id"
+              :value="person"
+              v-slot="{ selected, active }"
+            >
+              <li
+                class="relative cursor-default select-none py-2 pl-10 pr-4"
+                :class="{
+                  'bg-teal-600 text-white': active,
+                  'text-gray-900': !active,
+                }"
+              >
+                <span
+                  class="block truncate"
+                  :class="{ 'font-medium': selected, 'font-normal': !selected }"
+                >
+                  {{ person.name }}
+                </span>
+                <span
+                  v-if="selected"
+                  class="absolute inset-y-0 left-0 flex items-center pl-3"
+                  :class="{ 'text-white': active, 'text-teal-600': !active }"
+                >
+                  <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                </span>
+              </li>
+            </ComboboxOption>
+          </ComboboxOptions>
+        </TransitionRoot>
+      </div>
+    </Combobox>
+          <!-- <InputsBase
+            id="city"
+            name="city"
+            :placeholder="$t('PLACEHOLDERS.city')"
+            type="select"
+            :options="cities"
+          >
+          </InputsBase> -->
           <!-- ✅ Password & Confirm Password -->
           <div class="grid grid-cols-2 gap-4">
             <InputsText
@@ -105,7 +180,8 @@
           </div>
 
           <!-- ✅ Gender Selection (Radio Buttons) -->
-          <div class="flex items-center space-x-6">
+          <div class="flex items-center gap-8">
+            <!-- Male Option -->
             <label class="flex items-center space-x-2 cursor-pointer">
               <input
                 type="radio"
@@ -115,19 +191,17 @@
                 class="hidden"
               />
               <span
-                class="w-6 h-6 rounded-full border border-gray-400 flex items-center justify-center"
-                :class="{
-                  'border-mainTheme bg-mainTheme': formData.gender === 'male',
-                }"
-              >
-                <span
-                  v-if="formData.gender === 'male'"
-                  class="w-3 h-3 bg-white rounded-full"
-                ></span>
-              </span>
-              <span>{{ t("LABELS.male") }}</span>
+                class="size-6 rounded-full flex items-center justify-center transition-all"
+                :class="
+                  formData.gender === 'male'
+                    ? 'border-mainTheme bg-mainTheme'
+                    : 'bg-themeInputs'
+                "
+              ></span>
+              <span class="text-2xl">{{ t("PLACEHOLDERS.male") }}</span>
             </label>
 
+            <!-- Female Option -->
             <label class="flex items-center space-x-2 cursor-pointer">
               <input
                 type="radio"
@@ -137,17 +211,14 @@
                 class="hidden"
               />
               <span
-                class="w-6 h-6 rounded-full border border-gray-400 flex items-center justify-center"
-                :class="{
-                  'border-mainTheme bg-mainTheme': formData.gender === 'female',
-                }"
-              >
-                <span
-                  v-if="formData.gender === 'female'"
-                  class="w-3 h-3 bg-white rounded-full"
-                ></span>
-              </span>
-              <span>{{ t("LABELS.female") }}</span>
+                class="size-6 rounded-full flex items-center justify-center transition-all"
+                :class="
+                  formData.gender === 'female'
+                    ? 'border-mainTheme bg-mainTheme'
+                    : 'bg-themeInputs'
+                "
+              ></span>
+              <span class="text-2xl">{{ t("PLACEHOLDERS.female") }}</span>
             </label>
           </div>
 
@@ -173,19 +244,51 @@
           <span> {{ $t("BUTTONS.login") }}</span>
         </NuxtLink>
       </div>
-      
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { Combobox } from "@headlessui/vue";
 //   import { ChevronDownIcon } from "@heroicons/vue/solid";
 import * as yup from "yup";
 import { useToast } from "vue-toastification";
+import { useAuthenticationStore } from "~/stores/authentication"; //
+const authStore = useAuthenticationStore();
+const router = useRouter();
+const axios = useNuxtApp().$axios;
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxButton,
+  ComboboxOptions,
+  ComboboxOption,
+  TransitionRoot,
+} from '@headlessui/vue'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 
+// const people = [
+//   { id: 1, name: 'Wade Cooper' },
+//   { id: 2, name: 'Arlene Mccoy' },
+//   { id: 3, name: 'Devon Webb' },
+//   { id: 4, name: 'Tom Cook' },
+//   { id: 5, name: 'Tanya Fox' },
+//   { id: 6, name: 'Hellen Schmidt' },
+// ]
+
+let selected = ref(people[0])
+let query = ref('')
+
+// let filteredPeople = computed(() =>
+//   query.value === ''
+//     ? people
+//     : people.filter((person) =>
+//         person.name
+//           .toLowerCase()
+//           .replace(/\s+/g, '')
+//           .includes(query.value.toLowerCase().replace(/\s+/g, ''))
+//       )
+// )
 const { t } = useI18n();
 const toast = useToast();
 
@@ -194,49 +297,103 @@ const loading = ref(false);
 const formData = ref({
   username: "",
   mobile: "",
-  city: null,
+  city: null, // Ensure it's initialized
   password: "",
   confirm_password: "",
   gender: "",
 });
 
-const cities = ref([
+const people = ref([
   { id: 1, name: "Riyadh" },
   { id: 2, name: "Jeddah" },
   { id: 3, name: "Dammam" },
 ]);
 
-const schema = yup.object({
-  username: yup
-    .string()
-    .required(t("ERRORS.isRequired", { name: t("LABELS.username") })),
-  mobile: yup
-    .string()
-    .matches(/^[0-9]{10}$/, t("ERRORS.invalidPhone"))
-    .required(t("ERRORS.isRequired", { name: t("LABELS.phone") })),
-  city: yup
-    .object()
-    .nullable()
-    .required(t("ERRORS.isRequired", { name: t("LABELS.city") })),
-  password: yup
-    .string()
-    .min(6, t("ERRORS.password_length"))
-    .required(t("ERRORS.isRequired", { name: t("LABELS.password") })),
-  confirm_password: yup
-    .string()
-    .oneOf([yup.ref("password"), null], t("ERRORS.passwords_must_match"))
-    .required(t("ERRORS.isRequired", { name: t("LABELS.confirm_password") })),
-  gender: yup
-    .string()
-    .required(t("ERRORS.isRequired", { name: t("LABELS.gender") })),
-});
+// const schema = yup.object({
+//   username: yup
+//     .string()
+//     .required(t("ERRORS.isRequired", { name: t("LABELS.username") })),
+//   mobile: yup
+//     .string()
+//     .matches(/^[0-9]{10}$/, t("ERRORS.invalidPhone"))
+//     .required(t("ERRORS.isRequired", { name: t("LABELS.phone") })),
+//   city: yup
+//     .object()
+//     .nullable()
+//     .required(t("ERRORS.isRequired", { name: t("LABELS.city") })),
+//   password: yup
+//     .string()
+//     .min(6, t("ERRORS.password_length"))
+//     .required(t("ERRORS.isRequired", { name: t("LABELS.password") })),
+//   confirm_password: yup
+//     .string()
+//     .oneOf([yup.ref("password"), null], t("ERRORS.passwords_must_match"))
+//     .required(t("ERRORS.isRequired", { name: t("LABELS.confirm_password") })),
+//   gender: yup
+//     .string()
+//     .required(t("ERRORS.isRequired", { name: t("LABELS.gender") })),
+// });
 
-const submitRegisterForm = async () => {
+const submitRegisterForm = async (values) => {
+  console.log(values);
   loading.value = true;
-  toast.success(t("VALIDATION.register_success"));
-  setTimeout(() => {
+  const theData = new FormData();
+  // START:: APPEND STATIC DATA
+  theData.append("type", "ios");
+  theData.append("device_token", "static_device_token");
+  // END:: APPEND STATIC DATA
+
+  // START:: APPEND GENERAL DATA
+  theData.append("fullname", values.userName);
+  theData.append("country_id", values.phone_code);
+  theData.append("phone", values.mobile);
+  theData.append("city_id", values.city.id);
+  theData.append("password", values.password);
+  theData.append("password_confirmation", values.confirm_password);
+
+  try {
+    // ✅ Send Login Request
+    const res = await axios.post("teacher/register", theData);
+
     loading.value = false;
-  }, 2000);
+
+    toast.success(t("VALIDATION.register_success"));
+
+    authStore.profile = res?.data?.data;
+
+    useCookie("elmo3lm_elmosa3d_user_token").value =
+      res.data.data.token.access_token;
+    useCookie("elmo3lm_elmosa3d_user_type").value = res.data.data.user_type;
+    useCookie("elmo3lm_elmosa3d_user_id").value = res.data.data.id;
+    useCookie("elmo3lm_elmosa3d_user_avatar").value =
+      res.data.data.profile_image;
+
+    router.push("/registerSecond");
+    //  for Students
+    // if (res.data.data?.user_type === "student") {
+    //   useCookie(
+    //     "elmo3lm_elmosa3d_student_parent_phone",
+    //     res.data.data?.child_parent?.parent?.phone,
+    //     { path: "/" }
+    //   );
+    //   useCookie(
+    //     "elmo3lm_elmosa3d_student_parent_key",
+    //     JSON.stringify(res.data.data?.child_parent?.parent?.country),
+    //     { path: "/" }
+    //   );
+    // }
+
+    // clearLoginFormData();
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1000);
+  } catch (err) {
+    loading.value = false;
+    console.error(err);
+
+    // ✅ Show Error Message with Vue Toastification
+    toast.error(err.response?.data?.message || t("VALIDATION.login_failed"));
+  }
 };
 </script>
 
@@ -245,11 +402,11 @@ const submitRegisterForm = async () => {
 .auth-wrapper {
   @apply flex flex-col items-center justify-center w-full;
 }
-input,
+/* input,
 textarea,
 select {
   @apply border-none p-3 text-[20px] text-themeText bg-themeInputs rounded-xl;
-}
+} */
 .policy_title {
   margin-bottom: 0;
   font-size: 20px;

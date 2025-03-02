@@ -1,10 +1,8 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
 import { useAuthenticationStore } from "@/stores/authentication";
 import { useNotificationsStore } from "@/stores/notifications";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import auth from "~/middleware/auth";
 
 // Stores
 const authStore = useAuthenticationStore();
@@ -22,7 +20,6 @@ const notificationsMenuIsOpen = ref(false);
 
 // Computed
 const registeredUserType = computed(() => authStore.type);
-const isAuthenticated = computed(() => authStore.isAuthenticated);
 const userData = computed(() => authStore.getAuthenticatedUserData());
 const notificationsData = computed(() => notificationsStore.getNotifications);
 console.log(userData);
@@ -34,26 +31,26 @@ const navbarLinks = reactive([
     id: "my_sons",
     url: "/mySons",
     text: "NAVBAR.my_sons",
-    user_type: "all",
+    user_type: "oarent",
   },
   {
     id: "subjects",
     url: "/courses",
     text: "NAVBAR.subjects",
-    user_type: "all",
+    user_type: "student",
   },
   {
     id: "teachers",
     url: "/teachers",
     text: "NAVBAR.teachers",
-    user_type: "all",
+    user_type: "student",
   },
-  { id: "store", url: "/store", text: "NAVBAR.store", user_type: "all" },
+  { id: "store", url: "/store", text: "NAVBAR.store", user_type: "student" },
   {
     id: "added_subjects",
     url: "/added-subjects",
     text: "NAVBAR.added_subjects",
-    user_type: "all",
+    user_type: "teacher",
   },
 ]);
 
@@ -134,7 +131,7 @@ onMounted(() => {
 </script>
 <template>
 
-  <nav id="navbar" class="relative py-3 bg-themeBg">
+  <nav id="navbar" class="relative py-6 bg-themeBg">
     <!-- START:: SEARCH -->
     <Search v-if="searchIsOpen" @closeSearch="toggleSearch" />
     <!-- END:: SEARCH -->
@@ -486,7 +483,7 @@ nav .navbar_wrapper .navbar_btns_wrapper a {
   font-family: "ArbFONTS-Somar-SemiBold";
   color: var(--theme_text_clr);
   padding: 4px 10px;
-} */
+} 
 
 /* ✅ Badge Styling */
 .navbar_btns_wrapper a .badge,
@@ -518,7 +515,7 @@ nav .navbar_wrapper .navbar_btns_wrapper a {
   @apply flex items-center justify-center;
 }
 .navbar_btns_wrapper a {
-  @apply relative text-[22px] font-semibold text-themeText no-underline px-[10px] py-1;
+  @apply relative text-[22px] font-semibold text-mainTheme no-underline px-[10px] py-1;
 }
 /* ✅ Chat, Strengthening Requests, Shopping Cart, My Courses Buttons */
 .navbar_btns_wrapper a.chats_route,

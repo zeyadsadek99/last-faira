@@ -7,19 +7,20 @@
       :class="meta.touched && !meta.valid ? 'text-red-500' : 'text-text'"
       >{{ label }}</label
     >
-    <div class="relative">
-      <PhoneCode :disabled="disabled" />
+    <div class="relative flex gap-4">
       <input
         v-bind="field"
         :disabled="disabled"
         :placeholder="placeholder"
-        class="block h-[50px] w-full rounded-[8px] px-6 text-sm"
+        class="block h-[54px] border-none text-themeText bg-themeInputs w-full rounded-[15px] p-3 text-xl"
         :class="
           meta.touched && !meta.valid
             ? 'border-red-500 text-red-500 placeholder:text-red-200 bg-card_color'
             : 'bg-card_color placeholder:text-text_dark'
         "
       />
+      <PhoneCode :disabled="disabled" />
+
     </div>
     <VeeErrorMessage
       v-if="meta.touched && !meta.valid"

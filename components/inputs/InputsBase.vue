@@ -20,7 +20,7 @@
         >
       </label>
 
-      <div class="relative" :class="icon ? 'with_icon' : ''">
+      <div class="relative " :class="icon ? 'with_icon' : ''">
         <!-- <img class="icon" v-if="icon" :src="`/icons/${icon}`" alt="icon" /> -->
 
         <textarea
@@ -39,19 +39,23 @@
           v-bind="field"
           :disabled="disabled"
           :placeholder="placeholder"
-
-          class="block relative w-full appearance-none rounded-md   border-[1.25px] border-bordersub p-5 bg-white  focus:bg-white focus:outline-none"
+          class="block border-none text-themeText  bg-themeInputs w-full rounded-[15px] p-3 text-xl"
           @change="$emit('update:value', $event.target.value)"
         >
-          <option disabled selected class="text-[#5E6366]" value="">{{ placeholder }}</option>
+          <!-- <option disabled selected class="text-themeText bg-mainTheme" value="">
+            {{ placeholder }}
+          </option> -->
+          <!-- <option v-for="(name, id) in options" :key="id" :value="name.value">
+            {{ name.label }}
+          </option> -->
           <option
-            v-for="(option, index) in options"
-            :key="index"
-            :value="option.value"
+            class="text-themeText hover:bg-mainTheme"
+            v-for="city in options"
+            :key="city.id"
+            :value="city.id"
           >
-            {{ option.label }}
+            {{ city.name }}
           </option>
-
         </select>
 
         <input
@@ -72,12 +76,12 @@
           @change="$emit('change')"
           @keydown.enter.prevent="$emit('enter')"
         />
-        
+
         <div
           v-if="type === 'select'"
-          class="absolute top-6 end-4 text-primary  flex cursor-pointer items-center pointer-events-none"
+          class="absolute top-6 end-4 text-primary flex cursor-pointer items-center pointer-events-none"
         >
-          <IconsArrow class="text-primary " />
+          <!-- <IconsArrow class="text-primary" /> -->
         </div>
       </div>
       <VeeErrorMessage
@@ -169,7 +173,7 @@ watch(
 );
 </script>
 
-<style lang="scss" scoped>
+<!-- <style lang="scss" scoped>
 .input_wrapper {
   @apply flex flex-col relative;
   label {
@@ -192,10 +196,9 @@ watch(
       @apply text-red-500;
     }
     input,
-    textarea
-     {
+    textarea {
       @apply border-red-500 text-red-500;
     }
   }
 }
-</style>
+</style> -->

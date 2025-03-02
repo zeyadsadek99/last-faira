@@ -1,21 +1,21 @@
-::-webkit-scrollbar {
-  @apply w-3.5;
-}
+// ::-webkit-scrollbar {
+//   @apply w-1.5;
+// }
 
-/* Track */
-::-webkit-scrollbar-track {
-  @apply bg-[#f6f6fd];
-}
+// /* Track */
+// ::-webkit-scrollbar-track {
+//   @apply bg-[#f6f6fd];
+// }
 
 /* Handle */
-::-webkit-scrollbar-thumb {
-  @apply rounded-lg bg-primary;
-}
+// ::-webkit-scrollbar-thumb {
+//   @apply rounded-lg bg-primary;
+// }
 
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-primaryOpacity30;
-}
+// /* Handle on hover */
+// ::-webkit-scrollbar-thumb:hover {
+//   @apply bg-primaryOpacity30;
+// }
 * {
   // font-family: "ArbFONTS-Somar-Regular";
   outline: none;
